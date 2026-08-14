@@ -1,0 +1,7 @@
+html
+<div class="dashboard-container">
+  <h1>Bienvenido, {{ authService.currentUser()?.name }}</h1>
+  <p>Correo: {{ authService.currentUser()?.email }}</p>
+  <p>Rol: {{ authService.currentUser()?.role }}</p>
+  <button (click)="onLogout()">Cerrar sesión</button>
+</div>
