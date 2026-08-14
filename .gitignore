@@ -26,9 +26,8 @@ coverage/
 # Prisma AI skills
 .claude/
 .windsurf/
-.agents/c
+.agents/
 skills-lock.json
 
 # Prisma generated client
 backend/src/generated/
-.agents/
