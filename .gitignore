@@ -1,0 +1,33 @@
+# Node / Backend
+node_modules/
+dist/
+build/
+.env
+.env.local
+*.log
+npm-debug.log*
+
+# Prisma
+backend/prisma/*.db
+
+# Angular / Frontend
+frontend/.angular/
+frontend/dist/
+
+# Editor / OS
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Misc
+*.tsbuildinfo
+coverage/
+
+# Prisma AI skills
+.claude/
+.windsurf/
+.agents/
+skills-lock.json
+
+# Prisma generated client
+backend/src/generated/
