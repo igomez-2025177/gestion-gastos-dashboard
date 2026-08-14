@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { prisma } from "../lib/prisma";
 import { hashPassword, comparePassword } from "../utils/password";
 import { generateToken } from "../utils/jwt";
+import { AuthRequest } from "../middlewares/auth.middleware";
 
 export async function register(req: Request, res: Response) {
   try {
@@ -79,6 +80,26 @@ export async function login(req: Request, res: Response) {
     });
   } catch (error) {
     console.error("Error en login:", error);
+    return res.status(500).json({ error: "Error interno del servidor" });
+  }
+}
+
+export async function me(req: AuthRequest, res: Response) {
+  try {
+    const userId = req.user?.userId;
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, name: true, email: true, role: true },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    return res.status(200).json({ user });
+  } catch (error) {
+    console.error("Error en me:", error);
     return res.status(500).json({ error: "Error interno del servidor" });
   }
 }
