@@ -22,3 +22,13 @@ Thumbs.db
 # Misc
 *.tsbuildinfo
 coverage/
+
+# Prisma AI skills
+.claude/
+.windsurf/
+.agents/c
+skills-lock.json
+
+# Prisma generated client
+backend/src/generated/
+.agents/
