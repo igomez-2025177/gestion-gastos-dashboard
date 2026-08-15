@@ -1,0 +1,33 @@
+<div class="dashboard">
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">G</span>
+      <span class="brand-name">Gestión</span>
+    </div>
+    <div class="user-chip">
+      <div class="user-info">
+        <span class="user-name">{{ authService.currentUser()?.name }}</span>
+        <span class="user-role">{{ authService.currentUser()?.role }}</span>
+      </div>
+      <button class="logout-btn" (click)="onLogout()">Cerrar sesión</button>
+    </div>
+  </header>
+
+  <nav class="account-tabs">
+    @for (tab of accountTabs; track tab.id) {
+      <div class="tab" [class.tab-active]="tab.active" [class.tab-disabled]="tab.comingSoon">
+        {{ tab.label }}
+        @if (tab.comingSoon) {
+          <span class="tab-badge">No disponible</span>
+        }
+      </div>
+    }
+  </nav>
+
+  <main class="content">
+    <div class="preview-placeholder">
+      <span class="preview-tag">Vista previa</span>
+      <h1>No disponible</h1>
+    </div>
+  </main>
+</div>
