@@ -3,7 +3,6 @@
   background: var(--ink-950);
 }
 
-/* Topbar */
 .topbar {
   display: flex;
   align-items: center;
@@ -82,7 +81,6 @@
   color: var(--expense);
 }
 
-/* Account tabs (ledger-style) */
 .account-tabs {
   display: flex;
   gap: 0.5rem;
@@ -125,7 +123,6 @@
   border-radius: 4px;
 }
 
-/* Content */
 .content {
   background: var(--ink-800);
   border-top: 1px solid var(--ink-line);
@@ -134,7 +131,6 @@
   margin: 0 auto;
 }
 
-/* Summary cards */
 .summary-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -173,7 +169,7 @@
   color: var(--expense);
 }
 
-/* Two column layout */
+
 .two-col {
   display: grid;
   grid-template-columns: 1.3fr 1fr;
@@ -196,7 +192,6 @@
   color: var(--text-primary);
 }
 
-/* Category bars */
 .category-list {
   display: flex;
   flex-direction: column;
@@ -233,7 +228,6 @@
   background: var(--expense);
 }
 
-/* Trend mini chart */
 .trend-chart {
   display: flex;
   align-items: flex-end;
@@ -266,7 +260,6 @@
   color: var(--text-faint);
 }
 
-/* Budgets */
 .budget-list {
   display: flex;
   flex-direction: column;
@@ -299,7 +292,6 @@
   border-top: 1px dashed var(--ink-line);
 }
 
-/* Responsive */
 @media (max-width: 720px) {
   .summary-grid {
     grid-template-columns: 1fr;
