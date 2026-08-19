@@ -14,8 +14,6 @@ async function ensureDatabaseExists() {
   const url = new URL(databaseUrl);
   const dbName = url.pathname.replace("/", "");
 
-  // Nos conectamos a la base "postgres" (siempre existe) para poder
-  // revisar/crear la base real del proyecto
   const adminUrl = new URL(databaseUrl);
   adminUrl.pathname = "/postgres";
 

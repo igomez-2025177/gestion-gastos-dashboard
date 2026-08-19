@@ -1,8 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { verifyToken, JwtPayload } from "../utils/jwt";
 
-// Extendemos el tipo Request de Express para que TypeScript sepa
-// que, después de este middleware, req.user puede existir
 export interface AuthRequest extends Request {
   user?: JwtPayload;
 }
