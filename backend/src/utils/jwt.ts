@@ -6,8 +6,6 @@ if (!JWT_SECRET) {
   throw new Error("No se encontró JWT_SECRET en el .env");
 }
 
-// Constante nueva con tipo ya fijado en "string" (no "string | undefined"),
-// para que TypeScript la acepte dentro de las funciones de abajo
 const secret: string = JWT_SECRET;
 
 export interface JwtPayload {
