@@ -1,34 +1,57 @@
+Aquí está el archivo completo, con el .preview-placeholder actualizado (min-height más chico) y las clases nuevas (.preview-icon, .ghost-grid, .ghost-card, animación) agregadas al final:
+
+css
 .dashboard {
   min-height: 100vh;
   background: var(--ink-950);
+  position: relative;
+  overflow-x: hidden;
 }
 
+.dashboard::before {
+  content: '';
+  position: absolute;
+  top: -220px;
+  right: -160px;
+  width: 520px;
+  height: 520px;
+  background: var(--voltum-orange);
+  border-radius: 50%;
+  filter: blur(140px);
+  opacity: 0.14;
+  pointer-events: none;
+}
+
+/* Topbar */
 .topbar {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 1.25rem 2rem;
   border-bottom: 1px solid var(--ink-line);
+  z-index: 1;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 0.625rem;
+  gap: 0.75rem;
 }
 
 .brand-mark {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--accent);
-  color: var(--ink-950);
+  background: linear-gradient(135deg, var(--voltum-yellow), var(--voltum-orange), var(--voltum-red));
+  color: var(--voltum-black);
   font-family: var(--font-display);
   font-weight: 600;
   font-size: 1.125rem;
-  border-radius: 8px;
+  border-radius: 9px;
+  box-shadow: 0 6px 18px rgba(242, 130, 61, 0.3);
 }
 
 .brand-name {
@@ -36,6 +59,7 @@
   font-size: 1.25rem;
   font-weight: 500;
   letter-spacing: 0.01em;
+  color: var(--text-primary);
 }
 
 .user-chip {
@@ -60,8 +84,8 @@
 .user-role {
   font-family: var(--font-mono);
   font-size: 0.6875rem;
-  letter-spacing: 0.06em;
-  color: var(--accent);
+  letter-spacing: 0.08em;
+  color: var(--voltum-orange);
 }
 
 .logout-btn {
@@ -77,14 +101,18 @@
 }
 
 .logout-btn:hover {
-  border-color: var(--expense);
-  color: var(--expense);
+  border-color: var(--voltum-red);
+  color: var(--voltum-red);
+  background: var(--expense-dim);
 }
 
+/* Account tabs (ledger-style) */
 .account-tabs {
+  position: relative;
   display: flex;
   gap: 0.5rem;
   padding: 1.25rem 2rem 0 2rem;
+  z-index: 1;
 }
 
 .tab {
@@ -100,13 +128,14 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  transition: color 0.15s ease;
 }
 
 .tab-active {
   background: var(--ink-800);
   color: var(--text-primary);
-  border-color: var(--accent);
-  box-shadow: inset 0 2px 0 var(--accent);
+  border-color: rgba(242, 130, 61, 0.4);
+  box-shadow: inset 0 2px 0 0 var(--voltum-orange);
 }
 
 .tab-disabled {
@@ -123,14 +152,18 @@
   border-radius: 4px;
 }
 
+/* Content */
 .content {
+  position: relative;
   background: var(--ink-800);
   border-top: 1px solid var(--ink-line);
   padding: 2rem;
   max-width: 1100px;
   margin: 0 auto;
+  z-index: 1;
 }
 
+/* Summary cards */
 .summary-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -139,13 +172,32 @@
 }
 
 .summary-card {
+  position: relative;
   background: var(--ink-900);
   border: 1px solid var(--ink-line);
-  border-radius: 12px;
-  padding: 1.25rem 1.5rem;
+  border-radius: 14px;
+  padding: 1.375rem 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  overflow: hidden;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.summary-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--voltum-yellow), var(--voltum-orange), var(--voltum-red), var(--voltum-blue));
+  opacity: 0.9;
+}
+
+.summary-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.16);
 }
 
 .summary-label {
@@ -155,7 +207,7 @@
 
 .summary-value {
   font-family: var(--font-mono);
-  font-size: 1.75rem;
+  font-size: 1.875rem;
   font-weight: 500;
   letter-spacing: -0.01em;
   color: var(--text-primary);
@@ -166,10 +218,10 @@
 }
 
 .summary-value.expense {
-  color: var(--expense);
+  color: var(--voltum-red);
 }
 
-
+/* Two column layout */
 .two-col {
   display: grid;
   grid-template-columns: 1.3fr 1fr;
@@ -180,8 +232,13 @@
 .panel {
   background: var(--ink-900);
   border: 1px solid var(--ink-line);
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 1.5rem;
+  transition: border-color 0.15s ease;
+}
+
+.panel:hover {
+  border-color: rgba(255, 255, 255, 0.14);
 }
 
 .panel h2 {
@@ -192,10 +249,11 @@
   color: var(--text-primary);
 }
 
+/* Category bars */
 .category-list {
   display: flex;
   flex-direction: column;
-  gap: 0.875rem;
+  gap: 0.9375rem;
 }
 
 .category-header {
@@ -212,22 +270,24 @@
 }
 
 .bar-track {
-  height: 6px;
+  height: 7px;
   background: var(--ink-700);
-  border-radius: 3px;
+  border-radius: 4px;
   overflow: hidden;
 }
 
 .bar-fill {
   height: 100%;
-  background: var(--accent);
-  border-radius: 3px;
+  background: linear-gradient(90deg, var(--voltum-yellow), var(--voltum-orange));
+  border-radius: 4px;
+  transition: width 0.4s ease;
 }
 
 .bar-fill.bar-over {
-  background: var(--expense);
+  background: linear-gradient(90deg, var(--voltum-orange), var(--voltum-red));
 }
 
+/* Trend mini chart */
 .trend-chart {
   display: flex;
   align-items: flex-end;
@@ -250,8 +310,13 @@
   width: 100%;
   background: var(--income-dim);
   border-top: 2px solid var(--income);
-  border-radius: 3px 3px 0 0;
+  border-radius: 4px 4px 0 0;
   min-height: 4px;
+  transition: filter 0.15s ease;
+}
+
+.trend-bar-wrap:hover .trend-bar {
+  filter: brightness(1.25);
 }
 
 .trend-label {
@@ -260,10 +325,11 @@
   color: var(--text-faint);
 }
 
+/* Budgets */
 .budget-list {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.125rem;
 }
 
 .budget-header {
@@ -280,7 +346,7 @@
 }
 
 .budget-header .over {
-  color: var(--expense);
+  color: var(--voltum-red);
 }
 
 .mockup-note {
@@ -292,11 +358,135 @@
   border-top: 1px dashed var(--ink-line);
 }
 
+/* Preview placeholder */
+.preview-placeholder {
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3rem 1.5rem 2rem;
+}
+
+.preview-icon {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, rgba(244, 183, 64, 0.16), rgba(232, 80, 63, 0.16));
+  border: 1px solid rgba(242, 130, 61, 0.25);
+  color: var(--voltum-orange);
+}
+
+.preview-icon svg {
+  width: 30px;
+  height: 30px;
+}
+
+.preview-tag {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--voltum-orange);
+  background: var(--accent-dim);
+  padding: 0.3rem 0.85rem;
+  border-radius: 999px;
+  margin-bottom: 1.25rem;
+}
+
+.preview-placeholder h1 {
+  font-family: var(--font-display);
+  font-size: 2.25rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin: 0 0 0.75rem 0;
+  letter-spacing: -0.01em;
+}
+
+.preview-placeholder p {
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+  max-width: 400px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Tarjetas fantasma que insinúan el panel real */
+.ghost-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  padding: 0 1.5rem 2rem;
+}
+
+.ghost-card {
+  background: var(--ink-900);
+  border: 1px solid var(--ink-line);
+  border-radius: 14px;
+  padding: 1.375rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.ghost-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 30%,
+    rgba(242, 130, 61, 0.06) 45%,
+    rgba(232, 80, 63, 0.06) 50%,
+    transparent 65%
+  );
+  background-size: 200% 100%;
+  animation: ghost-shimmer 3.2s ease-in-out infinite;
+}
+
+.ghost-line {
+  display: block;
+  border-radius: 5px;
+  background: var(--ink-700);
+  position: relative;
+  z-index: 1;
+}
+
+.ghost-line-sm {
+  width: 45%;
+  height: 10px;
+}
+
+.ghost-line-lg {
+  width: 70%;
+  height: 22px;
+}
+
+@keyframes ghost-shimmer {
+  0% {
+    background-position: -60% 0;
+  }
+  100% {
+    background-position: 160% 0;
+  }
+}
+
+/* Responsive */
 @media (max-width: 720px) {
   .summary-grid {
     grid-template-columns: 1fr;
   }
   .two-col {
+    grid-template-columns: 1fr;
+  }
+  .ghost-grid {
     grid-template-columns: 1fr;
   }
   .topbar,

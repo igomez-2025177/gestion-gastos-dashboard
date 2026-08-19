@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -28,7 +28,7 @@ interface MonthPoint {
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
-export class Dashboard {
+export class Dashboard implements OnInit {
   accountTabs: AccountTab[] = [
     { id: 'personal', label: 'Personal', active: true, comingSoon: true },
     { id: 'negocio', label: 'Negocio', active: false, comingSoon: true },
@@ -63,6 +63,11 @@ export class Dashboard {
     public authService: AuthService,
     private router: Router
   ) {}
+
+  ngOnInit(): void {
+    this.authService.getMe().subscribe();
+  }
+
   budgetPercent(budget: Budget): number {
     return Math.min(Math.round((budget.spent / budget.limit) * 100), 999);
   }
