@@ -31,6 +31,17 @@ h1 {
   margin: 0 0 1.5rem 0;
 }
 
+.info-banner {
+  background: #f0f9ff;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  padding: 0.625rem 0.75rem;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
 .form-group {
   margin-bottom: 1.25rem;
 }

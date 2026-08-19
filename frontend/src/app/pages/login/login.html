@@ -3,6 +3,10 @@
     <h1>Iniciar sesión</h1>
     <p class="subtitle">Gestión de gastos e ingresos</p>
 
+    @if (sessionExpiredMessage) {
+      <div class="info-banner">Vuelve a iniciar sesión</div>
+    }
+
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
         <label for="email">Correo electrónico</label>
