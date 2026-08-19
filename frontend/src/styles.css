@@ -1,31 +1,40 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
-
 :root {
   --ink-950: #0b0f14;
   --ink-900: #121821;
   --ink-800: #171f2a;
   --ink-700: #1e2734;
   --ink-line: rgba(255, 255, 255, 0.08);
-
   --text-primary: #edeff3;
   --text-muted: #8b93a7;
   --text-faint: #5c6579;
-
+  /* Paleta VOLTUM */
+  --voltum-yellow: #f4b740;
+  --voltum-orange: #f2823d;
+  --voltum-red: #e8503f;
+  --voltum-blue: #3d6ff2;
+  --voltum-black: #121212;
   --income: #4fae82;
   --income-dim: rgba(79, 174, 130, 0.15);
-  --expense: #c15b5b;
-  --expense-dim: rgba(193, 91, 91, 0.15);
-  --accent: #d9a94a;
-  --accent-dim: rgba(217, 169, 74, 0.15);
-
+  --expense: var(--voltum-red);
+  --expense-dim: rgba(232, 80, 63, 0.15);
+  --accent: var(--voltum-orange);
+  --accent-dim: rgba(242, 130, 61, 0.15);
+  --link: var(--voltum-blue);
   --font-display: 'Fraunces', serif;
   --font-body: 'Public Sans', -apple-system, sans-serif;
   --font-mono: 'IBM Plex Mono', monospace;
 }
 
+html,
 body {
+  height: 100%;
+  margin: 0;
   background: var(--ink-950);
   color: var(--text-primary);
   font-family: var(--font-body);
-  margin: 0;
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
 }

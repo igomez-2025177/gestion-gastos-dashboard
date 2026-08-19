@@ -1,1 +1,11 @@
 <router-outlet />
+
+@if (sessionExpiredService.show()) {
+  <div class="modal-overlay">
+    <div class="modal-box">
+      <h2>Sesión expirada</h2>
+      <p>Su sesión ha excedido el tiempo límite. Por favor, acceda de nuevo.</p>
+      <button (click)="onSessionExpiredOk()">OK</button>
+    </div>
+  </div>
+}

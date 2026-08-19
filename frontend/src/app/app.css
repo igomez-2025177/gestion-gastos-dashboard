@@ -1,0 +1,41 @@
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal-box {
+  background: var(--ink-900, #171f2a);
+  border: 1px solid var(--ink-line, rgba(255, 255, 255, 0.08));
+  border-radius: 12px;
+  padding: 1.75rem;
+  max-width: 340px;
+  text-align: center;
+}
+
+.modal-box h2 {
+  font-family: var(--font-display, serif);
+  font-size: 1.125rem;
+  margin: 0 0 0.75rem 0;
+  color: var(--text-primary, #edeff3);
+}
+
+.modal-box p {
+  font-size: 0.875rem;
+  color: var(--text-muted, #8b93a7);
+  margin: 0 0 1.25rem 0;
+}
+
+.modal-box button {
+  background: var(--accent, #f2823d);
+  color: #121212;
+  border: none;
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
