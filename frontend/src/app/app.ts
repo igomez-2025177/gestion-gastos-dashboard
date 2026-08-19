@@ -1,5 +1,6 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component } from '@angular/core';
+import { RouterOutlet, Router } from '@angular/router';
+import { SessionExpiredService } from './services/session-expired.service';
 
 @Component({
   selector: 'app-root',
@@ -8,5 +9,13 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.css',
 })
 export class App {
-  protected readonly title = signal('gestion-gastos-frontend');
+  constructor(
+    public sessionExpiredService: SessionExpiredService,
+    private router: Router
+  ) {}
+
+  onSessionExpiredOk(): void {
+    this.sessionExpiredService.hide();
+    this.router.navigate(['/login'], { queryParams: { expired: true } });
+  }
 }
