@@ -24,7 +24,6 @@ export class Dashboard implements OnInit {
 
   activeTab = 'menu';
 
-  // datos de ejemplo, después esto va a venir de la BD
   balance = 54289.75;
   ingresosMes = 12450.0;
   gastosMes = 7689.3;
