@@ -15,19 +15,60 @@
 
   <nav class="account-tabs">
     @for (tab of accountTabs; track tab.id) {
-      <div class="tab" [class.tab-active]="tab.active" [class.tab-disabled]="tab.comingSoon">
+      <div
+        class="tab"
+        [class.tab-active]="activeTab === tab.id"
+        (click)="setActiveTab(tab.id)"
+      >
         {{ tab.label }}
-        @if (tab.comingSoon) {
-          <span class="tab-badge">No disponible</span>
-        }
       </div>
     }
   </nav>
 
   <main class="content">
-    <div class="preview-placeholder">
-      <span class="preview-tag">Vista previa</span>
-      <h1>No disponible</h1>
-    </div>
+    @if (activeTab === 'menu') {
+      <div class="summary-grid">
+        <div class="summary-card">
+          <span class="summary-label">Balance general</span>
+          <span class="summary-value">Q {{ formatMoney(balance) }}</span>
+        </div>
+
+        <div class="summary-card">
+          <span class="summary-label">Ingresos del mes</span>
+          <span class="summary-value income">Q {{ formatMoney(ingresosMes) }}</span>
+        </div>
+
+        <div class="summary-card">
+          <span class="summary-label">Gastos del mes</span>
+          <span class="summary-value expense">Q {{ formatMoney(gastosMes) }}</span>
+        </div>
+
+        <div class="summary-card">
+          <span class="summary-label">Impuestos</span>
+          <span class="summary-value">Q {{ formatMoney(impuestos) }}</span>
+          <span
+            class="tax-status-pill"
+            [class.pending]="impuestosEstado === 'Pendiente'"
+            [class.paid]="impuestosEstado === 'Al día'"
+          >
+            {{ impuestosEstado }}
+          </span>
+        </div>
+
+        <div class="summary-card">
+          <span class="summary-label">Fondo de inversión</span>
+          <span class="summary-value fund">Q {{ formatMoney(fondoInversion) }}</span>
+        </div>
+
+        <div class="summary-card">
+          <span class="summary-label">Negocio</span>
+          <span class="summary-value income">Q {{ formatMoney(negocio) }}</span>
+        </div>
+      </div>
+    } @else {
+      <div class="tab-empty">
+        <p>Esta sección todavía está en construcción.</p>
+      </div>
+    }
   </main>
 </div>
