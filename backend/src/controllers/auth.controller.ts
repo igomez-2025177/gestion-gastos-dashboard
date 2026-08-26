@@ -4,12 +4,25 @@ import { hashPassword, comparePassword } from "../utils/password";
 import { generateToken } from "../utils/jwt";
 import { AuthRequest } from "../middlewares/auth.middleware";
 
+const ALLOWED_EMAIL_DOMAINS = ["gmail.com", "hotmail.com", "outlook.com", "kinal.edu.gt"];
+
+function isEmailDomainAllowed(email: string): boolean {
+  const domain = email.split("@")[1]?.toLowerCase();
+  return !!domain && ALLOWED_EMAIL_DOMAINS.includes(domain);
+}
+
 export async function register(req: Request, res: Response) {
   try {
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({ error: "Faltan campos: name, email, password" });
+    }
+
+    if (!isEmailDomainAllowed(email)) {
+      return res.status(400).json({
+        error: `Solo se permiten correos de: ${ALLOWED_EMAIL_DOMAINS.join(", ")}`,
+      });
     }
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
