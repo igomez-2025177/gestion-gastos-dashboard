@@ -15,19 +15,82 @@
 
   <nav class="account-tabs">
     @for (tab of accountTabs; track tab.id) {
-      <div class="tab" [class.tab-active]="tab.active" [class.tab-disabled]="tab.comingSoon">
+      <div
+        class="tab"
+        [class.tab-active]="activeTab === tab.id"
+        [class.tab-disabled]="tab.disabled"
+        (click)="setActiveTab(tab)"
+      >
         {{ tab.label }}
-        @if (tab.comingSoon) {
-          <span class="tab-badge">No disponible</span>
-        }
       </div>
     }
   </nav>
 
   <main class="content">
-    <div class="preview-placeholder">
-      <span class="preview-tag">Vista previa</span>
-      <h1>No disponible</h1>
-    </div>
+    @if (activeTab === 'menu') {
+      <div class="summary-grid">
+        <div class="summary-card">
+          <span class="summary-label">Balance general</span>
+          <span class="summary-value" [class.na]="balance === null">
+            {{ formatMoney(balance) }}
+          </span>
+        </div>
+
+        <div class="summary-card">
+          <span class="summary-label">Ingresos del mes</span>
+          <span
+            class="summary-value"
+            [class.income]="ingresosMes !== null"
+            [class.na]="ingresosMes === null"
+          >
+            {{ formatMoney(ingresosMes) }}
+          </span>
+        </div>
+
+        <div class="summary-card">
+          <span class="summary-label">Gastos del mes</span>
+          <span
+            class="summary-value"
+            [class.expense]="gastosMes !== null"
+            [class.na]="gastosMes === null"
+          >
+            {{ formatMoney(gastosMes) }}
+          </span>
+        </div>
+
+        <div class="summary-card">
+          <span class="summary-label">Impuestos</span>
+          <span class="summary-value" [class.na]="impuestos === null">
+            {{ formatMoney(impuestos) }}
+          </span>
+        </div>
+
+        <div class="summary-card">
+          <span class="summary-label">Fondo de inversión</span>
+          <span
+            class="summary-value"
+            [class.fund]="fondoInversion !== null"
+            [class.na]="fondoInversion === null"
+          >
+            {{ formatMoney(fondoInversion) }}
+          </span>
+        </div>
+
+        <div class="summary-card">
+          <span class="summary-label">Negocio</span>
+          <span
+            class="summary-value"
+            [class.income]="negocio !== null"
+            [class.na]="negocio === null"
+          >
+            {{ formatMoney(negocio) }}
+          </span>
+        </div>
+      </div>
+    } @else {
+      <div class="tab-empty">
+        <p>No disponible</p>
+      </div>
+    }
   </main>
 </div>
