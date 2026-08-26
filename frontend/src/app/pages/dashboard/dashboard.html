@@ -18,7 +18,8 @@
       <div
         class="tab"
         [class.tab-active]="activeTab === tab.id"
-        (click)="setActiveTab(tab.id)"
+        [class.tab-disabled]="tab.disabled"
+        (click)="setActiveTab(tab)"
       >
         {{ tab.label }}
       </div>
@@ -30,44 +31,65 @@
       <div class="summary-grid">
         <div class="summary-card">
           <span class="summary-label">Balance general</span>
-          <span class="summary-value">Q {{ formatMoney(balance) }}</span>
+          <span class="summary-value" [class.na]="balance === null">
+            {{ formatMoney(balance) }}
+          </span>
         </div>
 
         <div class="summary-card">
           <span class="summary-label">Ingresos del mes</span>
-          <span class="summary-value income">Q {{ formatMoney(ingresosMes) }}</span>
+          <span
+            class="summary-value"
+            [class.income]="ingresosMes !== null"
+            [class.na]="ingresosMes === null"
+          >
+            {{ formatMoney(ingresosMes) }}
+          </span>
         </div>
 
         <div class="summary-card">
           <span class="summary-label">Gastos del mes</span>
-          <span class="summary-value expense">Q {{ formatMoney(gastosMes) }}</span>
+          <span
+            class="summary-value"
+            [class.expense]="gastosMes !== null"
+            [class.na]="gastosMes === null"
+          >
+            {{ formatMoney(gastosMes) }}
+          </span>
         </div>
 
         <div class="summary-card">
           <span class="summary-label">Impuestos</span>
-          <span class="summary-value">Q {{ formatMoney(impuestos) }}</span>
-          <span
-            class="tax-status-pill"
-            [class.pending]="impuestosEstado === 'Pendiente'"
-            [class.paid]="impuestosEstado === 'Al día'"
-          >
-            {{ impuestosEstado }}
+          <span class="summary-value" [class.na]="impuestos === null">
+            {{ formatMoney(impuestos) }}
           </span>
         </div>
 
         <div class="summary-card">
           <span class="summary-label">Fondo de inversión</span>
-          <span class="summary-value fund">Q {{ formatMoney(fondoInversion) }}</span>
+          <span
+            class="summary-value"
+            [class.fund]="fondoInversion !== null"
+            [class.na]="fondoInversion === null"
+          >
+            {{ formatMoney(fondoInversion) }}
+          </span>
         </div>
 
         <div class="summary-card">
           <span class="summary-label">Negocio</span>
-          <span class="summary-value income">Q {{ formatMoney(negocio) }}</span>
+          <span
+            class="summary-value"
+            [class.income]="negocio !== null"
+            [class.na]="negocio === null"
+          >
+            {{ formatMoney(negocio) }}
+          </span>
         </div>
       </div>
     } @else {
       <div class="tab-empty">
-        <p>Esta sección todavía está en construcción.</p>
+        <p>No disponible</p>
       </div>
     }
   </main>

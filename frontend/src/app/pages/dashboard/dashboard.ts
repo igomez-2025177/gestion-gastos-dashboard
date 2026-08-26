@@ -6,6 +6,7 @@ import { AuthService } from '../../services/auth.service';
 interface AccountTab {
   id: string;
   label: string;
+  disabled: boolean;
 }
 
 @Component({
@@ -16,21 +17,22 @@ interface AccountTab {
 })
 export class Dashboard implements OnInit {
   accountTabs: AccountTab[] = [
-    { id: 'menu', label: 'Menú' },
-    { id: 'personal', label: 'Personal' },
-    { id: 'negocio', label: 'Negocio' },
-    { id: 'fondo', label: 'Fondo de inversión' },
+    { id: 'menu', label: 'Menú', disabled: false },
+    { id: 'personal', label: 'Personal', disabled: true },
+    { id: 'negocio', label: 'Negocio', disabled: true },
+    { id: 'fondo', label: 'Fondo de inversión', disabled: true },
   ];
 
   activeTab = 'menu';
 
-  balance = 54289.75;
-  ingresosMes = 12450.0;
-  gastosMes = 7689.3;
-  impuestos = 2350.0;
-  impuestosEstado: 'Pendiente' | 'Al día' = 'Pendiente';
-  fondoInversion = 8120.0;
-  negocio = 6540.0;
+  // todavía no hay módulo de gastos/ingresos conectado a la BD,
+  // así que por ahora todo queda en null hasta que exista data real
+  balance: number | null = null;
+  ingresosMes: number | null = null;
+  gastosMes: number | null = null;
+  impuestos: number | null = null;
+  fondoInversion: number | null = null;
+  negocio: number | null = null;
 
   constructor(
     public authService: AuthService,
@@ -41,12 +43,14 @@ export class Dashboard implements OnInit {
     this.authService.getMe().subscribe();
   }
 
-  setActiveTab(id: string): void {
-    this.activeTab = id;
+  setActiveTab(tab: AccountTab): void {
+    if (tab.disabled) return;
+    this.activeTab = tab.id;
   }
 
-  formatMoney(value: number): string {
-    return value.toLocaleString('es-GT', {
+  formatMoney(value: number | null): string {
+    if (value === null) return 'No disponible';
+    return 'Q ' + value.toLocaleString('es-GT', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     });

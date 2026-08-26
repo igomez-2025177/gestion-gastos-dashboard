@@ -238,3 +238,21 @@
     padding-right: 1rem;
   }
 }
+
+.summary-value.na {
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  font-weight: 500;
+  color: var(--text-faint);
+  font-style: italic;
+}
+
+.tab-disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.tab-disabled:hover {
+  color: var(--text-faint);
+}
