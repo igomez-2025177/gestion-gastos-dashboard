@@ -1,0 +1,73 @@
+<div class="personal">
+  <section class="form-panel">
+    <h2>Registrar movimiento</h2>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="type-toggle">
+        <label class="type-option" [class.active]="form.value.type === 'INGRESO'">
+          <input type="radio" formControlName="type" value="INGRESO" />
+          Ingreso
+        </label>
+        <label class="type-option" [class.active]="form.value.type === 'GASTO'">
+          <input type="radio" formControlName="type" value="GASTO" />
+          Gasto
+        </label>
+      </div>
+
+      <div class="field">
+        <label for="category">Categoría</label>
+        <select id="category" formControlName="category">
+          @for (cat of categories; track cat.value) {
+            <option [value]="cat.value">{{ cat.label }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="amount">Monto (Q)</label>
+        <input id="amount" type="number" step="0.01" min="0" formControlName="amount" placeholder="0.00" />
+        @if (form.get('amount')?.touched && form.get('amount')?.invalid) {
+          <span class="field-error">Ingresa un monto válido mayor a 0</span>
+        }
+      </div>
+
+      <div class="field">
+        <label for="description">Descripción (opcional)</label>
+        <input id="description" type="text" formControlName="description" placeholder="ej. sueldo del mes" />
+      </div>
+
+      @if (errorMessage) {
+        <div class="form-error">{{ errorMessage }}</div>
+      }
+
+      <button type="submit" class="submit-btn" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Guardando...' : 'Registrar' }}
+      </button>
+    </form>
+  </section>
+
+  <section class="history-panel">
+    <h2>Historial</h2>
+
+    @if (movementService.movements().length === 0) {
+      <p class="empty-state">Todavía no hay movimientos registrados.</p>
+    } @else {
+      <div class="history-list">
+        @for (mov of movementService.movements(); track mov.id) {
+          <div class="history-item">
+            <div class="history-info">
+              <span class="history-category">{{ categoryLabel(mov.category) }}</span>
+              @if (mov.description) {
+                <span class="history-description">{{ mov.description }}</span>
+              }
+              <span class="history-date">{{ formatDate(mov.date) }}</span>
+            </div>
+            <span class="history-amount" [class.income]="mov.type === 'INGRESO'" [class.expense]="mov.type === 'GASTO'">
+              {{ mov.type === 'INGRESO' ? '+' : '-' }}Q {{ mov.amount.toLocaleString('es-GT', { minimumFractionDigits: 2 }) }}
+            </span>
+          </div>
+        }
+      </div>
+    }
+  </section>
+</div>
