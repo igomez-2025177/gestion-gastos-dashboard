@@ -19,6 +19,7 @@
   pointer-events: none;
 }
 
+/* Topbar */
 .topbar {
   position: relative;
   display: flex;
@@ -102,6 +103,7 @@
   background: var(--expense-dim);
 }
 
+/* Account tabs (estilo subrayado) */
 .account-tabs {
   position: relative;
   display: flex;
@@ -131,6 +133,17 @@
   border-bottom-color: var(--voltum-orange);
 }
 
+.tab-disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.tab-disabled:hover {
+  color: var(--text-faint);
+}
+
+/* Content */
 .content {
   position: relative;
   padding: 2.5rem 2rem;
@@ -139,6 +152,7 @@
   z-index: 1;
 }
 
+/* Summary cards */
 .summary-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -199,6 +213,16 @@
   color: var(--voltum-blue);
 }
 
+/* Valor cuando no hay data real todavía */
+.summary-value.na {
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  font-weight: 500;
+  color: var(--text-faint);
+  font-style: italic;
+}
+
+/* Pill de estado de impuestos */
 .tax-status-pill {
   align-self: flex-start;
   font-family: var(--font-mono);
@@ -220,6 +244,7 @@
   color: var(--voltum-black);
 }
 
+/* Placeholder de pestañas pendientes */
 .tab-empty {
   padding: 3rem 0;
   text-align: center;
@@ -227,6 +252,7 @@
   font-size: 0.9375rem;
 }
 
+/* Responsive */
 @media (max-width: 720px) {
   .summary-grid {
     grid-template-columns: 1fr;
@@ -237,22 +263,4 @@
     padding-left: 1rem;
     padding-right: 1rem;
   }
-}
-
-.summary-value.na {
-  font-family: var(--font-body);
-  font-size: 1.0625rem;
-  font-weight: 500;
-  color: var(--text-faint);
-  font-style: italic;
-}
-
-.tab-disabled {
-  cursor: not-allowed;
-  opacity: 0.45;
-  pointer-events: none;
-}
-
-.tab-disabled:hover {
-  color: var(--text-faint);
 }

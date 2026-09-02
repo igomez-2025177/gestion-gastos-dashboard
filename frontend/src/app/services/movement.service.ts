@@ -8,10 +8,10 @@ export type MovementCategory =
   | 'ALIMENTACION'
   | 'TRANSPORTE'
   | 'SERVICIOS'
-  | 'OCIO'
   | 'SALUD'
   | 'SUELDO'
   | 'BONO'
+  | 'BONO14'
   | 'VENTA'
   | 'INVERSION'
   | 'OTROS';
@@ -21,6 +21,8 @@ export interface Movement {
   type: MovementType;
   category: MovementCategory;
   amount: number;
+  igssAmount: number | null;
+  isrAmount: number | null;
   description: string | null;
   date: string;
   createdAt: string;
