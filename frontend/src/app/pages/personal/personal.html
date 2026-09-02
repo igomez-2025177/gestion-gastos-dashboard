@@ -48,28 +48,6 @@
         }
       </div>
 
-      @if (isSalaryCategorySelected()) {
-        <div class="deduction-preview">
-          <p class="deduction-title">Este ingreso lleva descuento de ley</p>
-          @if (previewDeduction(); as preview) {
-            <div class="deduction-row">
-              <span>IGSS (4.83%)</span>
-              <span>- {{ formatQ(preview.igss) }}</span>
-            </div>
-            <div class="deduction-row">
-              <span>ISR estimado</span>
-              <span>- {{ formatQ(preview.isr) }}</span>
-            </div>
-            <div class="deduction-row net">
-              <span>Recibirás</span>
-              <span>{{ formatQ(preview.neto) }}</span>
-            </div>
-          } @else {
-            <p class="deduction-hint">Escribe el monto para ver el descuento estimado</p>
-          }
-        </div>
-      }
-
       <div class="field">
         <label for="description">Descripción (opcional)</label>
         <input id="description" type="text" formControlName="description" placeholder="ej. sueldo del mes" />
@@ -155,21 +133,9 @@
                 [class.income]="mov.type === 'INGRESO'"
                 [class.expense]="mov.type === 'GASTO'"
               >
-                {{ mov.type === 'INGRESO' ? '+' : '-' }}{{ formatQ(hasDeductions(mov) ? netAmount(mov) : mov.amount) }}
+                {{ mov.type === 'INGRESO' ? '+' : '-' }}{{ formatQ(mov.amount) }}
               </span>
             </div>
-
-            @if (hasDeductions(mov)) {
-              <div class="history-deductions">
-                <span>Bruto {{ formatQ(mov.amount) }}</span>
-                @if (mov.igssAmount) {
-                  <span>· IGSS -{{ formatQ(mov.igssAmount) }}</span>
-                }
-                @if (mov.isrAmount) {
-                  <span>· ISR -{{ formatQ(mov.isrAmount) }}</span>
-                }
-              </div>
-            }
 
             <div class="history-actions">
               <button type="button" class="action-btn edit" (click)="startEdit(mov)">Editar</button>

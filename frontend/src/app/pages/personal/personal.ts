@@ -15,20 +15,6 @@ interface MonthOption {
   label: string;
 }
 
-const IGSS_RATE = 0.0483;
-const DEDUCCION_UNICA_ANUAL = 51024;
-const LIMITE_TRAMO_BAJO = 300000;
-const TASA_BAJA = 0.05;
-const TASA_ALTA = 0.07;
-
-const SALARY_CATEGORIES: MovementCategory[] = ['SUELDO', 'BONO'];
-
-interface DeductionPreview {
-  igss: number;
-  isr: number;
-  neto: number;
-}
-
 type HistoryFilter = 'TODOS' | MovementType;
 
 @Component({
@@ -43,8 +29,8 @@ export class Personal implements OnInit {
 
   incomeCategories: CategoryOption[] = [
     { value: 'SUELDO', label: 'Sueldo' },
-    { value: 'BONO', label: 'Bono (productividad)' },
-    { value: 'BONO14', label: 'Bono 14 (exento)' },
+    { value: 'BONO', label: 'Bono' },
+    { value: 'BONO14', label: 'Bono 14' },
     { value: 'VENTA', label: 'Venta' },
     { value: 'INVERSION', label: 'Inversión' },
     { value: 'OTROS', label: 'Otros' },
@@ -88,33 +74,6 @@ export class Personal implements OnInit {
 
   categoriesForType(type: MovementType | null): CategoryOption[] {
     return type === 'INGRESO' ? this.incomeCategories : this.expenseCategories;
-  }
-
-  isSalaryCategorySelected(): boolean {
-    const category = this.form.value.category;
-    return !!category && SALARY_CATEGORIES.includes(category);
-  }
-
-  previewDeduction(): DeductionPreview | null {
-    const amount = this.form.value.amount;
-    if (!this.isSalaryCategorySelected() || !amount || amount <= 0) return null;
-
-    const igss = amount * IGSS_RATE;
-
-    const salarioAnual = amount * 12;
-    const igssAnual = igss * 12;
-    const rentaImponibleAnual = Math.max(0, salarioAnual - igssAnual - DEDUCCION_UNICA_ANUAL);
-
-    let isrAnual: number;
-    if (rentaImponibleAnual <= LIMITE_TRAMO_BAJO) {
-      isrAnual = rentaImponibleAnual * TASA_BAJA;
-    } else {
-      const excedente = rentaImponibleAnual - LIMITE_TRAMO_BAJO;
-      isrAnual = LIMITE_TRAMO_BAJO * TASA_BAJA + excedente * TASA_ALTA;
-    }
-    const isr = isrAnual / 12;
-
-    return { igss, isr, neto: amount - igss - isr };
   }
 
   onSubmit(): void {
@@ -195,24 +154,16 @@ export class Personal implements OnInit {
     return 'Q ' + value.toLocaleString('es-GT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
-  netAmount(mov: Movement): number {
-    return mov.amount - (mov.igssAmount ?? 0) - (mov.isrAmount ?? 0);
-  }
-
-  hasDeductions(mov: Movement): boolean {
-    return mov.igssAmount !== null || mov.isrAmount !== null;
-  }
-
   totalIngresos(): number {
     return this.filteredMovements()
       .filter((m) => m.type === 'INGRESO')
-      .reduce((sum, m) => sum + this.movementService.effectiveAmount(m), 0);
+      .reduce((sum, m) => sum + m.amount, 0);
   }
 
   totalGastos(): number {
     return this.filteredMovements()
       .filter((m) => m.type === 'GASTO')
-      .reduce((sum, m) => sum + this.movementService.effectiveAmount(m), 0);
+      .reduce((sum, m) => sum + m.amount, 0);
   }
 
   balancePersonal(): number {
@@ -269,8 +220,6 @@ export class Personal implements OnInit {
     return key === this.filterMonth;
   }
 
-  // genera un PDF con exactamente lo que se ve en el historial ahorita
-  // (respeta los filtros de mes, tipo y categoria que esten activos)
   exportarPDF(): void {
     const doc = new jsPDF();
 
@@ -287,20 +236,17 @@ export class Personal implements OnInit {
       mov.type === 'INGRESO' ? 'Ingreso' : 'Gasto',
       this.categoryLabel(mov.category),
       mov.description ?? '-',
-      (mov.type === 'INGRESO' ? '+' : '-') +
-        this.formatQ(this.hasDeductions(mov) ? this.netAmount(mov) : mov.amount),
+      (mov.type === 'INGRESO' ? '+' : '-') + this.formatQ(mov.amount),
     ]);
 
     autoTable(doc, {
       startY: 30,
       head: [['Fecha', 'Tipo', 'Categoría', 'Descripción', 'Monto']],
       body: filas,
-      headStyles: { fillColor: [242, 130, 61] }, // naranja VOLTUM
+      headStyles: { fillColor: [242, 130, 61] },
       styles: { fontSize: 9 },
     });
 
-    // "as any" porque el tipo de jsPDF no incluye lastAutoTable por defecto,
-    // pero el plugin si lo agrega en tiempo de ejecucion
     const finalY = (doc as any).lastAutoTable?.finalY ?? 30;
 
     doc.setFontSize(11);

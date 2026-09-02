@@ -34,9 +34,8 @@ export class Dashboard implements OnInit {
   balance: number | null = null;
   ingresosMes: number | null = null;
   gastosMes: number | null = null;
-
-  // estos todavía no tienen modulo propio, se quedan en No disponible
   impuestos: number | null = null;
+
   fondoInversion: number | null = null;
   negocio: number | null = null;
 
@@ -58,9 +57,10 @@ export class Dashboard implements OnInit {
     let balanceTotal = 0;
     let ingresosDelMes = 0;
     let gastosDelMes = 0;
+    let ivaDelMes = 0;
 
     for (const mov of movements) {
-      const monto = this.movementService.effectiveAmount(mov);
+      const monto = mov.amount;
       const fecha = new Date(mov.date);
       const esDelMesActual = fecha.getMonth() === currentMonth && fecha.getFullYear() === currentYear;
 
@@ -70,12 +70,14 @@ export class Dashboard implements OnInit {
       } else {
         balanceTotal -= monto;
         if (esDelMesActual) gastosDelMes += monto;
+        if (esDelMesActual) ivaDelMes += this.movementService.ivaIncluido(mov);
       }
     }
 
     this.balance = balanceTotal;
     this.ingresosMes = ingresosDelMes;
     this.gastosMes = gastosDelMes;
+    this.impuestos = ivaDelMes;
   }
 
   setActiveTab(tab: AccountTab): void {
