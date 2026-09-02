@@ -8,6 +8,22 @@ interface CategoryOption {
   label: string;
 }
 
+interface TaxResult {
+  salarioMensual: number;
+  igssMensual: number;
+  isrMensual: number;
+  totalDescuentos: number;
+  salarioNeto: number;
+  rentaImponibleAnual: number;
+}
+
+// constantes de ley, Decreto 10-2012 (ISR) y Acuerdo 1124 (IGSS)
+const IGSS_RATE = 0.0483; // cuota laboral, se la descuenta el patrono al trabajador
+const DEDUCCION_UNICA_ANUAL = 51024; // Q48,000 fijos + Q3,024 deduccion extraordinaria 2026
+const LIMITE_TRAMO_BAJO = 300000; // hasta aqui se paga 5% anual
+const TASA_BAJA = 0.05;
+const TASA_ALTA = 0.07; // sobre el excedente de Q300,000
+
 @Component({
   selector: 'app-personal',
   imports: [CommonModule, ReactiveFormsModule],
@@ -35,7 +51,6 @@ export class Personal implements OnInit {
     { value: 'OTROS', label: 'Otros' },
   ];
 
-  // lista combinada, solo se usa para mostrar el label en el historial
   allCategories: CategoryOption[] = [...this.incomeCategories, ...this.expenseCategories];
 
   isSubmitting = false;
@@ -48,11 +63,17 @@ export class Personal implements OnInit {
     description: this.fb.control(''),
   });
 
+  // form aparte para la calculadora de impuestos, no tiene nada que ver
+  // con el form de arriba de registrar movimientos
+  taxForm = this.fb.group({
+    salarioMensual: this.fb.control<number | null>(null, [Validators.required, Validators.min(1)]),
+  });
+
+  taxResult: TaxResult | null = null;
+
   ngOnInit(): void {
     this.movementService.getAll().subscribe();
 
-    // cuando cambia el tipo, la categoría seleccionada puede quedar inválida
-    // (ej. tenías "Sueldo" y cambiaste a Gasto), así que reseteamos a la primera opción válida
     this.form.get('type')!.valueChanges.subscribe((newType) => {
       const firstValid = this.categoriesForType(newType!)[0]?.value;
       this.form.get('category')!.setValue(firstValid);
@@ -103,5 +124,47 @@ export class Personal implements OnInit {
       month: 'short',
       year: 'numeric',
     });
+  }
+
+  calcularImpuestos(): void {
+    if (this.taxForm.invalid) {
+      this.taxForm.markAllAsTouched();
+      return;
+    }
+
+    const salarioMensual = this.taxForm.value.salarioMensual!;
+    const salarioAnual = salarioMensual * 12;
+
+    // IGSS: se calcula sobre el salario ordinario, y es deducible del ISR
+    const igssMensual = salarioMensual * IGSS_RATE;
+    const igssAnual = igssMensual * 12;
+
+    // renta imponible = lo que sobra despues de restar IGSS y la deduccion unica de ley
+    const rentaImponibleAnual = Math.max(0, salarioAnual - igssAnual - DEDUCCION_UNICA_ANUAL);
+
+    // tarifa escalonada: 5% hasta el primer tramo, 7% sobre lo que exceda
+    let isrAnual: number;
+    if (rentaImponibleAnual <= LIMITE_TRAMO_BAJO) {
+      isrAnual = rentaImponibleAnual * TASA_BAJA;
+    } else {
+      const excedente = rentaImponibleAnual - LIMITE_TRAMO_BAJO;
+      isrAnual = LIMITE_TRAMO_BAJO * TASA_BAJA + excedente * TASA_ALTA;
+    }
+
+    const isrMensual = isrAnual / 12;
+    const totalDescuentos = igssMensual + isrMensual;
+
+    this.taxResult = {
+      salarioMensual,
+      igssMensual,
+      isrMensual,
+      totalDescuentos,
+      salarioNeto: salarioMensual - totalDescuentos,
+      rentaImponibleAnual,
+    };
+  }
+
+  formatQ(value: number): string {
+    return 'Q ' + value.toLocaleString('es-GT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 }
