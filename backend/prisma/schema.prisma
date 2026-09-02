@@ -12,14 +12,41 @@ enum Role {
   USER
 }
 
-model User {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  password  String
-  role      Role     @default(USER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+enum MovementType {
+  INGRESO
+  GASTO
+}
 
+enum MovementCategory {
+  ALIMENTACION
+  TRANSPORTE
+  SERVICIOS
+  OCIO
+  SALUD
+  OTROS
+}
+
+model User {
+  id        String     @id @default(uuid())
+  name      String
+  email     String     @unique
+  password  String
+  role      Role       @default(USER)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  movements Movement[]
   @@map("users")
+}
+
+model Movement {
+  id          String           @id @default(uuid())
+  type        MovementType
+  category    MovementCategory
+  amount      Float
+  description String?
+  date        DateTime         @default(now())
+  createdAt   DateTime         @default(now())
+  userId      String
+  user        User             @relation(fields: [userId], references: [id])
+  @@map("movements")
 }
