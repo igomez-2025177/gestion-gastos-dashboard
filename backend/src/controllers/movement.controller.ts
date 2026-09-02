@@ -4,7 +4,14 @@ import { AuthRequest } from "../middlewares/auth.middleware";
 import { MovementType, MovementCategory } from "../generated/prisma/client";
 
 const VALID_TYPES = Object.values(MovementType);
-const VALID_CATEGORIES = Object.values(MovementCategory);
+
+const INCOME_CATEGORIES: MovementCategory[] = ["SUELDO", "BONO", "VENTA", "INVERSION", "OTROS"];
+const EXPENSE_CATEGORIES: MovementCategory[] = ["ALIMENTACION", "TRANSPORTE", "SERVICIOS", "OCIO", "SALUD", "OTROS"];
+
+function isCategoryValidForType(type: MovementType, category: MovementCategory): boolean {
+  if (type === "INGRESO") return INCOME_CATEGORIES.includes(category);
+  return EXPENSE_CATEGORIES.includes(category);
+}
 
 export async function createMovement(req: AuthRequest, res: Response) {
   try {
@@ -21,9 +28,10 @@ export async function createMovement(req: AuthRequest, res: Response) {
       });
     }
 
-    if (!VALID_CATEGORIES.includes(category)) {
+    if (!isCategoryValidForType(type, category)) {
+      const validList = type === "INGRESO" ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
       return res.status(400).json({
-        error: `Categoría inválida, debe ser una de: ${VALID_CATEGORIES.join(", ")}`,
+        error: `Categoría inválida para ${type}, debe ser una de: ${validList.join(", ")}`,
       });
     }
 

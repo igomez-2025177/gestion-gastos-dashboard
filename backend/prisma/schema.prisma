@@ -18,11 +18,18 @@ enum MovementType {
 }
 
 enum MovementCategory {
+  // categorías de gasto
   ALIMENTACION
   TRANSPORTE
   SERVICIOS
   OCIO
   SALUD
+  // categorías de ingreso
+  SUELDO
+  BONO
+  VENTA
+  INVERSION
+  // categoría comodín, sirve para cualquiera de los dos tipos
   OTROS
 }
 
