@@ -22,11 +22,11 @@ enum MovementCategory {
   ALIMENTACION
   TRANSPORTE
   SERVICIOS
-  OCIO
   SALUD
   // categorías de ingreso
   SUELDO
   BONO
+  BONO14
   VENTA
   INVERSION
   // categoría comodín, sirve para cualquiera de los dos tipos
@@ -50,6 +50,8 @@ model Movement {
   type        MovementType
   category    MovementCategory
   amount      Float
+  igssAmount  Float?
+  isrAmount   Float?
   description String?
   date        DateTime         @default(now())
   createdAt   DateTime         @default(now())

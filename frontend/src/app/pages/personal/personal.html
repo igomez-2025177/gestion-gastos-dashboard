@@ -1,6 +1,6 @@
 <div class="personal">
   <section class="form-panel">
-    <h2>Registrar movimiento</h2>
+    <h2>{{ editingId ? 'Editar movimiento' : 'Registrar movimiento' }}</h2>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="type-toggle">
@@ -31,6 +31,28 @@
         }
       </div>
 
+      @if (isSalaryCategorySelected()) {
+        <div class="deduction-preview">
+          <p class="deduction-title">Este ingreso lleva descuento de ley</p>
+          @if (previewDeduction(); as preview) {
+            <div class="deduction-row">
+              <span>IGSS (4.83%)</span>
+              <span>- {{ formatQ(preview.igss) }}</span>
+            </div>
+            <div class="deduction-row">
+              <span>ISR estimado</span>
+              <span>- {{ formatQ(preview.isr) }}</span>
+            </div>
+            <div class="deduction-row net">
+              <span>Recibirás</span>
+              <span>{{ formatQ(preview.neto) }}</span>
+            </div>
+          } @else {
+            <p class="deduction-hint">Escribe el monto para ver el descuento estimado</p>
+          }
+        </div>
+      }
+
       <div class="field">
         <label for="description">Descripción (opcional)</label>
         <input id="description" type="text" formControlName="description" placeholder="ej. sueldo del mes" />
@@ -40,9 +62,14 @@
         <div class="form-error">{{ errorMessage }}</div>
       }
 
-      <button type="submit" class="submit-btn" [disabled]="isSubmitting">
-        {{ isSubmitting ? 'Guardando...' : 'Registrar' }}
-      </button>
+      <div class="form-actions">
+        <button type="submit" class="submit-btn" [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Guardando...' : (editingId ? 'Actualizar' : 'Registrar') }}
+        </button>
+        @if (editingId) {
+          <button type="button" class="cancel-btn" (click)="cancelEdit()">Cancelar</button>
+        }
+      </div>
     </form>
   </section>
 
@@ -55,79 +82,42 @@
       <div class="history-list">
         @for (mov of movementService.movements(); track mov.id) {
           <div class="history-item">
-            <div class="history-info">
-              <span class="history-category">{{ categoryLabel(mov.category) }}</span>
-              @if (mov.description) {
-                <span class="history-description">{{ mov.description }}</span>
-              }
-              <span class="history-date">{{ formatDate(mov.date) }}</span>
+            <div class="history-main">
+              <div class="history-info">
+                <span class="history-category">{{ categoryLabel(mov.category) }}</span>
+                @if (mov.description) {
+                  <span class="history-description">{{ mov.description }}</span>
+                }
+                <span class="history-date">{{ formatDate(mov.date) }}</span>
+              </div>
+              <span
+                class="history-amount"
+                [class.income]="mov.type === 'INGRESO'"
+                [class.expense]="mov.type === 'GASTO'"
+              >
+                {{ mov.type === 'INGRESO' ? '+' : '-' }}{{ formatQ(hasDeductions(mov) ? netAmount(mov) : mov.amount) }}
+              </span>
             </div>
-            <span class="history-amount" [class.income]="mov.type === 'INGRESO'" [class.expense]="mov.type === 'GASTO'">
-              {{ mov.type === 'INGRESO' ? '+' : '-' }}Q {{ mov.amount.toLocaleString('es-GT', { minimumFractionDigits: 2 }) }}
-            </span>
+
+            @if (hasDeductions(mov)) {
+              <div class="history-deductions">
+                <span>Bruto {{ formatQ(mov.amount) }}</span>
+                @if (mov.igssAmount) {
+                  <span>· IGSS -{{ formatQ(mov.igssAmount) }}</span>
+                }
+                @if (mov.isrAmount) {
+                  <span>· ISR -{{ formatQ(mov.isrAmount) }}</span>
+                }
+              </div>
+            }
+
+            <div class="history-actions">
+              <button type="button" class="action-btn edit" (click)="startEdit(mov)">Editar</button>
+              <button type="button" class="action-btn delete" (click)="confirmDelete(mov)">Eliminar</button>
+            </div>
           </div>
         }
       </div>
     }
-  </section>
-
-  <section class="tax-panel">
-    <h2>Calculadora de descuentos de ley</h2>
-    <p class="tax-subtitle">IGSS (4.83%) e ISR sobre renta de trabajo, según Decreto 10-2012</p>
-
-    <form [formGroup]="taxForm" (ngSubmit)="calcularImpuestos()" class="tax-form">
-      <div class="field">
-        <label for="salarioMensual">Salario mensual bruto (Q)</label>
-        <input
-          id="salarioMensual"
-          type="number"
-          step="0.01"
-          min="0"
-          formControlName="salarioMensual"
-          placeholder="ej. 6000.00"
-        />
-        @if (taxForm.get('salarioMensual')?.touched && taxForm.get('salarioMensual')?.invalid) {
-          <span class="field-error">Ingresa un salario válido mayor a 0</span>
-        }
-      </div>
-
-      <button type="submit" class="submit-btn tax-btn">Calcular</button>
-    </form>
-
-    @if (taxResult) {
-      <div class="tax-result">
-        <div class="tax-row">
-          <span>Salario bruto</span>
-          <span>{{ formatQ(taxResult.salarioMensual) }}</span>
-        </div>
-        <div class="tax-row deduction">
-          <span>IGSS (4.83%)</span>
-          <span>- {{ formatQ(taxResult.igssMensual) }}</span>
-        </div>
-        <div class="tax-row deduction">
-          <span>ISR retenido</span>
-          <span>- {{ formatQ(taxResult.isrMensual) }}</span>
-        </div>
-        <div class="tax-row total">
-          <span>Salario neto</span>
-          <span>{{ formatQ(taxResult.salarioNeto) }}</span>
-        </div>
-
-        @if (taxResult.rentaImponibleAnual === 0) {
-          <p class="tax-note">
-            Con este salario no se paga ISR — está por debajo de la deducción anual de ley (Q51,024).
-          </p>
-        } @else {
-          <p class="tax-note">
-            Renta imponible anual: {{ formatQ(taxResult.rentaImponibleAnual) }}
-          </p>
-        }
-      </div>
-    }
-
-    <p class="tax-disclaimer">
-      Cálculo estimado con fines académicos según la ley vigente. El IRTRA e INTECAP los paga el
-      patrono, no se descuentan del salario del trabajador.
-    </p>
   </section>
 </div>
