@@ -1,94 +1,81 @@
-import { Injectable, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Injectable, signal } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { firstValueFrom } from "rxjs";
+import { environment } from "../../environments/environment";
 
-export type MovementType = 'INGRESO' | 'GASTO';
-
-export type MovementCategory =
-  | 'ALIMENTACION'
-  | 'TRANSPORTE'
-  | 'SERVICIOS'
-  | 'SALUD'
-  | 'SUELDO'
-  | 'BONO'
-  | 'VENTA'
-  | 'INVERSION'
-  | 'OTROS';
+export type MovementType = "INGRESO" | "GASTO";
 
 export interface Movement {
   id: string;
   type: MovementType;
-  category: MovementCategory;
+  category: string;
   amount: number;
-  igssAmount: number | null;
-  isrAmount: number | null;
-  description: string | null;
+  description?: string | null;
   date: string;
-  createdAt: string;
-  userId: string;
+  businessId?: string | null;
 }
 
 export interface CreateMovementPayload {
   type: MovementType;
-  category: MovementCategory;
+  category: string;
   amount: number;
   description?: string;
+  date?: string;
+  businessId?: string;
 }
 
-const IVA_RATE = 0.12;
-
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: "root" })
 export class MovementService {
-  private readonly API_URL = 'http://localhost:3000/api/movements';
+  private readonly baseUrl = `${environment.apiUrl}/movements`;
 
   movements = signal<Movement[]>([]);
+  negocioMovements = signal<Movement[]>([]);
 
   constructor(private http: HttpClient) {}
 
-  create(payload: CreateMovementPayload): Observable<{ message: string; movement: Movement }> {
-    return this.http
-      .post<{ message: string; movement: Movement }>(this.API_URL, payload)
-      .pipe(
-        tap((response) => {
-          this.movements.update((current) => [response.movement, ...current]);
-        })
-      );
+  async getAll(businessId?: string) {
+    const url = businessId ? `${this.baseUrl}?businessId=${businessId}` : this.baseUrl;
+    const data = await firstValueFrom(this.http.get<Movement[]>(url));
+    if (businessId) {
+      this.negocioMovements.set(data);
+    } else {
+      this.movements.set(data);
+    }
+    return data;
   }
 
-  getAll(): Observable<{ movements: Movement[] }> {
-    return this.http.get<{ movements: Movement[] }>(this.API_URL).pipe(
-      tap((response) => this.movements.set(response.movements))
+  async create(payload: CreateMovementPayload) {
+    const created = await firstValueFrom(this.http.post<Movement>(this.baseUrl, payload));
+    if (payload.businessId) {
+      this.negocioMovements.update((list) => [created, ...list]);
+    } else {
+      this.movements.update((list) => [created, ...list]);
+    }
+    return created;
+  }
+
+  async update(id: string, payload: Partial<CreateMovementPayload>) {
+    const updated = await firstValueFrom(
+      this.http.put<Movement>(`${this.baseUrl}/${id}`, payload)
     );
+    if (updated.businessId) {
+      this.negocioMovements.update((list) => list.map((m) => (m.id === id ? updated : m)));
+    } else {
+      this.movements.update((list) => list.map((m) => (m.id === id ? updated : m)));
+    }
+    return updated;
   }
 
-  update(id: string, payload: CreateMovementPayload): Observable<{ message: string; movement: Movement }> {
-    return this.http
-      .put<{ message: string; movement: Movement }>(`${this.API_URL}/${id}`, payload)
-      .pipe(
-        tap((response) => {
-          this.movements.update((current) =>
-            current.map((mov) => (mov.id === id ? response.movement : mov))
-          );
-        })
-      );
-  }
-
-  delete(id: string): Observable<{ message: string }> {
-    return this.http.delete<{ message: string }>(`${this.API_URL}/${id}`).pipe(
-      tap(() => {
-        this.movements.update((current) => current.filter((mov) => mov.id !== id));
-      })
-    );
-  }
-
-  effectiveAmount(mov: Movement): number {
-    return mov.amount;
+  async delete(id: string, businessId?: string) {
+    await firstValueFrom(this.http.delete(`${this.baseUrl}/${id}`));
+    if (businessId) {
+      this.negocioMovements.update((list) => list.filter((m) => m.id !== id));
+    } else {
+      this.movements.update((list) => list.filter((m) => m.id !== id));
+    }
   }
 
   ivaIncluido(mov: Movement): number {
-    if (mov.type !== 'GASTO') return 0;
-    return mov.amount * (IVA_RATE / (1 + IVA_RATE));
+    return mov.amount * (0.12 / 1.12);
   }
 }
