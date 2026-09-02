@@ -81,7 +81,7 @@ export async function getMovements(req: AuthRequest, res: Response) {
 export async function updateMovement(req: AuthRequest, res: Response) {
   try {
     const userId = req.user?.userId;
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { type, category, amount, description, date } = req.body;
 
     const existing = await prisma.movement.findUnique({ where: { id } });
@@ -137,7 +137,7 @@ export async function updateMovement(req: AuthRequest, res: Response) {
 export async function deleteMovement(req: AuthRequest, res: Response) {
   try {
     const userId = req.user?.userId;
-    const { id } = req.params;
+    const id = req.params.id as string;
 
     const existing = await prisma.movement.findUnique({ where: { id } });
 
