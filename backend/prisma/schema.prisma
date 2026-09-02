@@ -22,7 +22,6 @@ enum MovementCategory {
   ALIMENTACION
   TRANSPORTE
   SERVICIOS
-  OCIO
   SALUD
   // categorías de ingreso
   SUELDO

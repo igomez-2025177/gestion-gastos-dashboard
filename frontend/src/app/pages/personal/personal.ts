@@ -8,17 +8,12 @@ interface CategoryOption {
   label: string;
 }
 
-// mismas constantes de ley que usa el backend, aqui solo sirven para
-// mostrar una vista previa mientras escribes el monto. El calculo que
-// de verdad se guarda siempre lo hace el backend, esto es solo visual
 const IGSS_RATE = 0.0483;
 const DEDUCCION_UNICA_ANUAL = 51024;
 const LIMITE_TRAMO_BAJO = 300000;
 const TASA_BAJA = 0.05;
 const TASA_ALTA = 0.07;
 
-// solo Sueldo y Bono (productividad) llevan descuento automatico de ley.
-// Bono14 esta exento por ley, igual que el Aguinaldo
 const SALARY_CATEGORIES: MovementCategory[] = ['SUELDO', 'BONO'];
 
 interface DeductionPreview {
@@ -50,13 +45,10 @@ export class Personal implements OnInit {
     { value: 'ALIMENTACION', label: 'Alimentación' },
     { value: 'TRANSPORTE', label: 'Transporte' },
     { value: 'SERVICIOS', label: 'Servicios' },
-    { value: 'OCIO', label: 'Ocio' },
     { value: 'SALUD', label: 'Salud' },
-    { value: 'COMPRA_GRANDE', label: 'Compra grande (vehículo/vivienda)' },
     { value: 'OTROS', label: 'Otros' },
   ];
 
-  // lista combinada, solo se usa para mostrar el label en el historial
   allCategories: CategoryOption[] = [...this.incomeCategories, ...this.expenseCategories];
 
   isSubmitting = false;
@@ -72,8 +64,6 @@ export class Personal implements OnInit {
   ngOnInit(): void {
     this.movementService.getAll().subscribe();
 
-    // cuando cambia el tipo, la categoría seleccionada puede quedar inválida
-    // (ej. tenías "Sueldo" y cambiaste a Gasto), así que reseteamos a la primera opción válida
     this.form.get('type')!.valueChanges.subscribe((newType) => {
       const firstValid = this.categoriesForType(newType!)[0]?.value;
       this.form.get('category')!.setValue(firstValid);
@@ -84,19 +74,11 @@ export class Personal implements OnInit {
     return type === 'INGRESO' ? this.incomeCategories : this.expenseCategories;
   }
 
-  // le dice al template si la categoria elegida ahorita es de las que
-  // llevan descuento automatico de ley (sueldo o bono de productividad)
   isSalaryCategorySelected(): boolean {
     const category = this.form.value.category;
     return !!category && SALARY_CATEGORIES.includes(category);
   }
 
-  isBigPurchaseCategorySelected(): boolean {
-    return this.form.value.category === 'COMPRA_GRANDE';
-  }
-
-  // vista previa en vivo mientras escribes el monto, no es lo que se guarda,
-  // solo para que veas cuanto te van a descontar antes de darle a Registrar
   previewDeduction(): DeductionPreview | null {
     const amount = this.form.value.amount;
     if (!this.isSalaryCategorySelected() || !amount || amount <= 0) return null;
@@ -165,8 +147,6 @@ export class Personal implements OnInit {
     return 'Q ' + value.toLocaleString('es-GT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
-  // el monto neto real que quedo despues de descuentos de ley,
-  // para un ingreso que ya esta guardado en el historial
   netAmount(mov: Movement): number {
     return mov.amount - (mov.igssAmount ?? 0) - (mov.isrAmount ?? 0);
   }

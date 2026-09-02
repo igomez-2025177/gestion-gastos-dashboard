@@ -7,15 +7,7 @@ import { calculateSalaryDeductions } from "../utils/taxes";
 const VALID_TYPES = Object.values(MovementType);
 
 const INCOME_CATEGORIES: MovementCategory[] = ["SUELDO", "BONO", "BONO14", "VENTA", "INVERSION", "OTROS"];
-const EXPENSE_CATEGORIES: MovementCategory[] = [
-  "ALIMENTACION",
-  "TRANSPORTE",
-  "SERVICIOS",
-  "OCIO",
-  "SALUD",
-  "COMPRA_GRANDE",
-  "OTROS",
-];
+const EXPENSE_CATEGORIES: MovementCategory[] = ["ALIMENTACION", "TRANSPORTE", "SERVICIOS", "SALUD", "OTROS"];
 
 // solo Sueldo y Bono (productividad) llevan descuento automatico de ley.
 // Bono14 queda fuera a proposito: por ley esta exento de IGSS e ISR, igual que el Aguinaldo
@@ -54,8 +46,6 @@ export async function createMovement(req: AuthRequest, res: Response) {
       return res.status(400).json({ error: "El monto debe ser un número mayor a 0" });
     }
 
-    // si es un ingreso de sueldo o bono, calculamos IGSS e ISR automatico
-    // el monto que se guarda en "amount" siempre es el bruto (antes de descuentos)
     let igssAmount: number | null = null;
     let isrAmount: number | null = null;
 
