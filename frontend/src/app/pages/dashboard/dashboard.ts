@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { Personal } from '../personal/personal';
 
 interface AccountTab {
   id: string;
@@ -11,22 +12,20 @@ interface AccountTab {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule],
+  imports: [CommonModule, Personal],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
 export class Dashboard implements OnInit {
   accountTabs: AccountTab[] = [
     { id: 'menu', label: 'Menú', disabled: false },
-    { id: 'personal', label: 'Personal', disabled: true },
+    { id: 'personal', label: 'Personal', disabled: false },
     { id: 'negocio', label: 'Negocio', disabled: true },
     { id: 'fondo', label: 'Fondo de inversión', disabled: true },
   ];
 
   activeTab = 'menu';
 
-  // todavía no hay módulo de gastos/ingresos conectado a la BD,
-  // así que por ahora todo queda en null hasta que exista data real
   balance: number | null = null;
   ingresosMes: number | null = null;
   gastosMes: number | null = null;
