@@ -18,7 +18,15 @@ export class Personal implements OnInit {
   private fb = inject(FormBuilder);
   public movementService = inject(MovementService);
 
-  categories: CategoryOption[] = [
+  incomeCategories: CategoryOption[] = [
+    { value: 'SUELDO', label: 'Sueldo' },
+    { value: 'BONO', label: 'Bono' },
+    { value: 'VENTA', label: 'Venta' },
+    { value: 'INVERSION', label: 'Inversión' },
+    { value: 'OTROS', label: 'Otros' },
+  ];
+
+  expenseCategories: CategoryOption[] = [
     { value: 'ALIMENTACION', label: 'Alimentación' },
     { value: 'TRANSPORTE', label: 'Transporte' },
     { value: 'SERVICIOS', label: 'Servicios' },
@@ -27,18 +35,32 @@ export class Personal implements OnInit {
     { value: 'OTROS', label: 'Otros' },
   ];
 
+  // lista combinada, solo se usa para mostrar el label en el historial
+  allCategories: CategoryOption[] = [...this.incomeCategories, ...this.expenseCategories];
+
   isSubmitting = false;
   errorMessage = '';
 
   form = this.fb.group({
     type: this.fb.control<MovementType>('INGRESO', Validators.required),
-    category: this.fb.control<MovementCategory>('OTROS', Validators.required),
+    category: this.fb.control<MovementCategory>('SUELDO', Validators.required),
     amount: this.fb.control<number | null>(null, [Validators.required, Validators.min(1)]),
     description: this.fb.control(''),
   });
 
   ngOnInit(): void {
     this.movementService.getAll().subscribe();
+
+    // cuando cambia el tipo, la categoría seleccionada puede quedar inválida
+    // (ej. tenías "Sueldo" y cambiaste a Gasto), así que reseteamos a la primera opción válida
+    this.form.get('type')!.valueChanges.subscribe((newType) => {
+      const firstValid = this.categoriesForType(newType!)[0]?.value;
+      this.form.get('category')!.setValue(firstValid);
+    });
+  }
+
+  categoriesForType(type: MovementType | null): CategoryOption[] {
+    return type === 'INGRESO' ? this.incomeCategories : this.expenseCategories;
   }
 
   onSubmit(): void {
@@ -62,7 +84,7 @@ export class Personal implements OnInit {
       .subscribe({
         next: () => {
           this.isSubmitting = false;
-          this.form.reset({ type: 'INGRESO', category: 'OTROS', amount: null, description: '' });
+          this.form.reset({ type: 'INGRESO', category: 'SUELDO', amount: null, description: '' });
         },
         error: (err) => {
           this.isSubmitting = false;
@@ -72,7 +94,7 @@ export class Personal implements OnInit {
   }
 
   categoryLabel(value: MovementCategory): string {
-    return this.categories.find((c) => c.value === value)?.label ?? value;
+    return this.allCategories.find((c) => c.value === value)?.label ?? value;
   }
 
   formatDate(dateString: string): string {

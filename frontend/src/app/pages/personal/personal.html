@@ -17,7 +17,7 @@
       <div class="field">
         <label for="category">Categoría</label>
         <select id="category" formControlName="category">
-          @for (cat of categories; track cat.value) {
+          @for (cat of categoriesForType(form.value.type ?? null); track cat.value) {
             <option [value]="cat.value">{{ cat.label }}</option>
           }
         </select>

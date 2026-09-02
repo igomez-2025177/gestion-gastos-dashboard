@@ -10,6 +10,10 @@ export type MovementCategory =
   | 'SERVICIOS'
   | 'OCIO'
   | 'SALUD'
+  | 'SUELDO'
+  | 'BONO'
+  | 'VENTA'
+  | 'INVERSION'
   | 'OTROS';
 
 export interface Movement {
@@ -45,8 +49,6 @@ export class MovementService {
       .post<{ message: string; movement: Movement }>(this.API_URL, payload)
       .pipe(
         tap((response) => {
-          // metemos el movimiento nuevo al inicio de la lista, sin tener que
-          // pedirle todo de nuevo al backend
           this.movements.update((current) => [response.movement, ...current]);
         })
       );
