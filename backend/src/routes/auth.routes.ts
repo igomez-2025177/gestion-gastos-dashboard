@@ -1,12 +1,11 @@
 import { Router } from "express";
-import { createMovement, getMovements, updateMovement, deleteMovement } from "../controllers/movement.controller";
+import { register, login, me } from "../controllers/auth.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
 
 const router = Router();
 
-router.post("/", authMiddleware, createMovement);
-router.get("/", authMiddleware, getMovements);
-router.put("/:id", authMiddleware, updateMovement);
-router.delete("/:id", authMiddleware, deleteMovement);
+router.post("/register", register);
+router.post("/login", login);
+router.get("/me", authMiddleware, me);
 
 export default router;
