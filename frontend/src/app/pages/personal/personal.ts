@@ -17,6 +17,8 @@ const LIMITE_TRAMO_BAJO = 300000;
 const TASA_BAJA = 0.05;
 const TASA_ALTA = 0.07;
 
+// solo Sueldo y Bono (productividad) llevan descuento automatico de ley.
+// Bono14 esta exento por ley, igual que el Aguinaldo
 const SALARY_CATEGORIES: MovementCategory[] = ['SUELDO', 'BONO'];
 
 interface DeductionPreview {
@@ -37,7 +39,8 @@ export class Personal implements OnInit {
 
   incomeCategories: CategoryOption[] = [
     { value: 'SUELDO', label: 'Sueldo' },
-    { value: 'BONO', label: 'Bono' },
+    { value: 'BONO', label: 'Bono (productividad)' },
+    { value: 'BONO14', label: 'Bono 14 (exento)' },
     { value: 'VENTA', label: 'Venta' },
     { value: 'INVERSION', label: 'Inversión' },
     { value: 'OTROS', label: 'Otros' },
@@ -49,9 +52,11 @@ export class Personal implements OnInit {
     { value: 'SERVICIOS', label: 'Servicios' },
     { value: 'OCIO', label: 'Ocio' },
     { value: 'SALUD', label: 'Salud' },
+    { value: 'COMPRA_GRANDE', label: 'Compra grande (vehículo/vivienda)' },
     { value: 'OTROS', label: 'Otros' },
   ];
 
+  // lista combinada, solo se usa para mostrar el label en el historial
   allCategories: CategoryOption[] = [...this.incomeCategories, ...this.expenseCategories];
 
   isSubmitting = false;
@@ -67,6 +72,8 @@ export class Personal implements OnInit {
   ngOnInit(): void {
     this.movementService.getAll().subscribe();
 
+    // cuando cambia el tipo, la categoría seleccionada puede quedar inválida
+    // (ej. tenías "Sueldo" y cambiaste a Gasto), así que reseteamos a la primera opción válida
     this.form.get('type')!.valueChanges.subscribe((newType) => {
       const firstValid = this.categoriesForType(newType!)[0]?.value;
       this.form.get('category')!.setValue(firstValid);
@@ -78,10 +85,14 @@ export class Personal implements OnInit {
   }
 
   // le dice al template si la categoria elegida ahorita es de las que
-  // llevan descuento automatico de ley (sueldo o bono)
+  // llevan descuento automatico de ley (sueldo o bono de productividad)
   isSalaryCategorySelected(): boolean {
     const category = this.form.value.category;
     return !!category && SALARY_CATEGORIES.includes(category);
+  }
+
+  isBigPurchaseCategorySelected(): boolean {
+    return this.form.value.category === 'COMPRA_GRANDE';
   }
 
   // vista previa en vivo mientras escribes el monto, no es lo que se guarda,

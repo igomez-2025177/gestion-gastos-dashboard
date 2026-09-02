@@ -53,6 +53,17 @@
         </div>
       }
 
+      @if (isBigPurchaseCategorySelected()) {
+        <div class="big-purchase-note">
+          <p class="deduction-title">Este gasto no sigue la regla del 12% normal</p>
+          <p>
+            Vehículo usado paga una tarifa fija según el año, vehículo nuevo paga 12% de IVA sobre
+            la factura, y una vivienda nueva paga 12% mientras que una de segunda mano paga 3% de
+            Timbres Fiscales. Aquí solo se registra el monto, sin calcular el impuesto exacto.
+          </p>
+        </div>
+      }
+
       <div class="field">
         <label for="description">Descripción (opcional)</label>
         <input id="description" type="text" formControlName="description" placeholder="ej. sueldo del mes" />

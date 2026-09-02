@@ -1,17 +1,14 @@
-// calculos de descuentos de ley, Decreto 10-2012 (ISR) y Acuerdo 1124 (IGSS)
-export const IGSS_RATE = 0.0483; // cuota laboral, se la descuenta el patrono al trabajador
-const DEDUCCION_UNICA_ANUAL = 51024; // Q48,000 fijos + Q3,024 deduccion extraordinaria 2026
-const LIMITE_TRAMO_BAJO = 300000; // hasta aqui se paga 5% anual
+export const IGSS_RATE = 0.0483;
+const DEDUCCION_UNICA_ANUAL = 51024;
+const LIMITE_TRAMO_BAJO = 300000; 
 const TASA_BAJA = 0.05;
-const TASA_ALTA = 0.07; // sobre el excedente de Q300,000
+const TASA_ALTA = 0.07;
 
 export interface SalaryDeductions {
   igssAmount: number;
   isrAmount: number;
 }
 
-// recibe el monto mensual (sueldo o bono) y proyecta el ISR anual
-// para sacar cuanto corresponde retener ese mes en particular
 export function calculateSalaryDeductions(monthlyAmount: number): SalaryDeductions {
   const igssAmount = monthlyAmount * IGSS_RATE;
 

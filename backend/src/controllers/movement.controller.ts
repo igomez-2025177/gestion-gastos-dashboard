@@ -6,11 +6,19 @@ import { calculateSalaryDeductions } from "../utils/taxes";
 
 const VALID_TYPES = Object.values(MovementType);
 
-const INCOME_CATEGORIES: MovementCategory[] = ["SUELDO", "BONO", "VENTA", "INVERSION", "OTROS"];
-const EXPENSE_CATEGORIES: MovementCategory[] = ["ALIMENTACION", "TRANSPORTE", "SERVICIOS", "OCIO", "SALUD", "OTROS"];
+const INCOME_CATEGORIES: MovementCategory[] = ["SUELDO", "BONO", "BONO14", "VENTA", "INVERSION", "OTROS"];
+const EXPENSE_CATEGORIES: MovementCategory[] = [
+  "ALIMENTACION",
+  "TRANSPORTE",
+  "SERVICIOS",
+  "OCIO",
+  "SALUD",
+  "COMPRA_GRANDE",
+  "OTROS",
+];
 
-// categorias de ingreso a las que se les calcula IGSS/ISR automatico,
-// porque son las que la ley trata como renta de trabajo (salario)
+// solo Sueldo y Bono (productividad) llevan descuento automatico de ley.
+// Bono14 queda fuera a proposito: por ley esta exento de IGSS e ISR, igual que el Aguinaldo
 const SALARY_CATEGORIES: MovementCategory[] = ["SUELDO", "BONO"];
 
 function isCategoryValidForType(type: MovementType, category: MovementCategory): boolean {

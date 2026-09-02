@@ -10,8 +10,10 @@ export type MovementCategory =
   | 'SERVICIOS'
   | 'OCIO'
   | 'SALUD'
+  | 'COMPRA_GRANDE'
   | 'SUELDO'
   | 'BONO'
+  | 'BONO14'
   | 'VENTA'
   | 'INVERSION'
   | 'OTROS';
