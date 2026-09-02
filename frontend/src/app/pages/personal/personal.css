@@ -21,7 +21,6 @@
   color: var(--text-primary);
 }
 
-/* Toggle ingreso/gasto */
 .type-toggle {
   display: flex;
   gap: 0.5rem;
@@ -50,7 +49,6 @@
   background: var(--accent-dim);
 }
 
-/* Campos del form */
 .field {
   display: flex;
   flex-direction: column;
@@ -113,7 +111,54 @@
   cursor: not-allowed;
 }
 
-/* Historial */
+/* Vista previa de descuento automatico (sueldo/bono) */
+.deduction-preview {
+  background: var(--ink-800);
+  border: 1px dashed var(--ink-line);
+  border-radius: 10px;
+  padding: 0.875rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.deduction-title {
+  font-size: 0.75rem;
+  color: var(--voltum-orange);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 0.5rem 0;
+}
+
+.deduction-hint {
+  font-size: 0.8125rem;
+  color: var(--text-faint);
+  margin: 0;
+}
+
+.deduction-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  padding: 0.2rem 0;
+}
+
+.deduction-row span:last-child {
+  font-family: var(--font-mono);
+  color: var(--voltum-red);
+}
+
+.deduction-row.net {
+  border-top: 1px solid var(--ink-line);
+  margin-top: 0.375rem;
+  padding-top: 0.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.deduction-row.net span:last-child {
+  color: var(--income);
+}
+
 .empty-state {
   color: var(--text-faint);
   font-size: 0.875rem;
@@ -130,13 +175,16 @@
 }
 
 .history-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   padding: 0.875rem 1rem;
   background: var(--ink-800);
   border: 1px solid var(--ink-line);
   border-radius: 10px;
+}
+
+.history-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .history-info {
@@ -176,94 +224,16 @@
   color: var(--voltum-red);
 }
 
-/* Panel de calculadora de impuestos */
-.tax-panel {
-  grid-column: 1 / -1;
-  background: var(--ink-900);
-  border: 1px solid var(--ink-line);
-  border-radius: 14px;
-  padding: 1.5rem;
-  margin-top: 1.25rem;
-}
-
-.tax-panel h2 {
-  font-family: var(--font-display);
-  font-size: 1.0625rem;
-  font-weight: 500;
-  margin: 0 0 0.375rem 0;
-  color: var(--text-primary);
-}
-
-.tax-subtitle {
-  font-size: 0.8125rem;
-  color: var(--text-muted);
-  margin: 0 0 1.25rem 0;
-}
-
-.tax-form {
+.history-deductions {
   display: flex;
-  align-items: flex-end;
-  gap: 1rem;
-  max-width: 420px;
-}
-
-.tax-form .field {
-  flex: 1;
-  margin-bottom: 0;
-}
-
-.tax-btn {
-  width: auto;
-  padding: 0.625rem 1.5rem;
-  white-space: nowrap;
-}
-
-.tax-result {
-  margin-top: 1.5rem;
-  padding-top: 1.25rem;
-  border-top: 1px dashed var(--ink-line);
-  max-width: 420px;
-}
-
-.tax-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 0.5rem 0;
-  font-size: 0.9375rem;
-  color: var(--text-primary);
-}
-
-.tax-row.deduction span:last-child {
-  color: var(--voltum-red);
-  font-family: var(--font-mono);
-}
-
-.tax-row.total {
-  border-top: 1px solid var(--ink-line);
+  flex-wrap: wrap;
+  gap: 0.5rem;
   margin-top: 0.5rem;
-  padding-top: 0.75rem;
-  font-weight: 600;
-  font-size: 1.0625rem;
-}
-
-.tax-row.total span:last-child {
-  color: var(--income);
+  padding-top: 0.5rem;
+  border-top: 1px dashed var(--ink-line);
   font-family: var(--font-mono);
-}
-
-.tax-note {
-  font-size: 0.8125rem;
-  color: var(--text-muted);
-  margin: 0.75rem 0 0 0;
-}
-
-.tax-disclaimer {
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   color: var(--text-faint);
-  margin: 1.25rem 0 0 0;
-  padding-top: 1rem;
-  border-top: 1px solid var(--ink-line);
-  line-height: 1.5;
 }
 
 @media (max-width: 720px) {
