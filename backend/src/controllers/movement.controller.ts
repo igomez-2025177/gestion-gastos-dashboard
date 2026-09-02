@@ -2,11 +2,16 @@ import { Response } from "express";
 import { prisma } from "../lib/prisma";
 import { AuthRequest } from "../middlewares/auth.middleware";
 import { MovementType, MovementCategory } from "../generated/prisma/client";
+import { calculateSalaryDeductions } from "../utils/taxes";
 
 const VALID_TYPES = Object.values(MovementType);
 
 const INCOME_CATEGORIES: MovementCategory[] = ["SUELDO", "BONO", "VENTA", "INVERSION", "OTROS"];
 const EXPENSE_CATEGORIES: MovementCategory[] = ["ALIMENTACION", "TRANSPORTE", "SERVICIOS", "OCIO", "SALUD", "OTROS"];
+
+// categorias de ingreso a las que se les calcula IGSS/ISR automatico,
+// porque son las que la ley trata como renta de trabajo (salario)
+const SALARY_CATEGORIES: MovementCategory[] = ["SUELDO", "BONO"];
 
 function isCategoryValidForType(type: MovementType, category: MovementCategory): boolean {
   if (type === "INGRESO") return INCOME_CATEGORIES.includes(category);
@@ -41,6 +46,17 @@ export async function createMovement(req: AuthRequest, res: Response) {
       return res.status(400).json({ error: "El monto debe ser un número mayor a 0" });
     }
 
+    // si es un ingreso de sueldo o bono, calculamos IGSS e ISR automatico
+    // el monto que se guarda en "amount" siempre es el bruto (antes de descuentos)
+    let igssAmount: number | null = null;
+    let isrAmount: number | null = null;
+
+    if (type === "INGRESO" && SALARY_CATEGORIES.includes(category)) {
+      const deductions = calculateSalaryDeductions(numericAmount);
+      igssAmount = deductions.igssAmount;
+      isrAmount = deductions.isrAmount;
+    }
+
     const movement = await prisma.movement.create({
       data: {
         type,
@@ -49,6 +65,8 @@ export async function createMovement(req: AuthRequest, res: Response) {
         description: description || null,
         date: date ? new Date(date) : new Date(),
         userId: userId!,
+        igssAmount,
+        isrAmount,
       },
     });
 

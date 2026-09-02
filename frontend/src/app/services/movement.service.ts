@@ -21,6 +21,8 @@ export interface Movement {
   type: MovementType;
   category: MovementCategory;
   amount: number;
+  igssAmount: number | null;
+  isrAmount: number | null;
   description: string | null;
   date: string;
   createdAt: string;
