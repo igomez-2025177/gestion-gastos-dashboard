@@ -1,0 +1,68 @@
+<div class="historial-filters">
+  <label>
+    Mes
+    <input type="month" [ngModel]="filterMonth()" (ngModelChange)="filterMonth.set($event)" />
+  </label>
+
+  <label>
+    Tipo
+    <select [ngModel]="filterType()" (ngModelChange)="filterType.set($event)">
+      <option value="">Todos</option>
+      <option value="INGRESO">Ingreso</option>
+      <option value="GASTO">Gasto</option>
+    </select>
+  </label>
+
+  <label>
+    Categoría
+    <select [ngModel]="filterCategory()" (ngModelChange)="filterCategory.set($event)">
+      <option value="">Todas</option>
+      @for (cat of categoryLabels | keyvalue; track cat.key) {
+        <option [value]="cat.key">{{ cat.value }}</option>
+      }
+    </select>
+  </label>
+
+  <button type="button" class="btn-secondary" (click)="exportPdf()">Exportar PDF</button>
+</div>
+
+<div class="historial-summary">
+  <div>Ingresos: Q{{ totalIngresos().toFixed(2) }}</div>
+  <div>Gastos: Q{{ totalGastos().toFixed(2) }}</div>
+  <div>Balance: Q{{ balance().toFixed(2) }}</div>
+</div>
+
+<table class="historial-table">
+  <thead>
+    <tr>
+      <th>Fecha</th><th>Tipo</th><th>Categoría</th><th>Monto</th><th>Descripción</th><th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (mov of filtered(); track mov.id) {
+      <tr>
+        <td>{{ mov.date | date: 'dd/MM/yyyy' }}</td>
+        <td>{{ mov.type === 'INGRESO' ? 'Ingreso' : 'Gasto' }}</td>
+        <td>{{ categoryLabels[mov.category] ?? mov.category }}</td>
+
+        @if (editingId() === mov.id) {
+          <td><input type="number" [ngModel]="editAmount()" (ngModelChange)="editAmount.set($event)" /></td>
+          <td><input type="text" [ngModel]="editDescription()" (ngModelChange)="editDescription.set($event)" /></td>
+          <td>
+            <button type="button" (click)="saveEdit(mov)">Guardar</button>
+            <button type="button" (click)="cancelEdit()">Cancelar</button>
+          </td>
+        } @else {
+          <td>Q{{ mov.amount.toFixed(2) }}</td>
+          <td>{{ mov.description || '—' }}</td>
+          <td>
+            <button type="button" (click)="startEdit(mov)">Editar</button>
+            <button type="button" (click)="remove(mov)">Eliminar</button>
+          </td>
+        }
+      </tr>
+    } @empty {
+      <tr><td colspan="6">Todavía no hay movimientos registrados.</td></tr>
+    }
+  </tbody>
+</table>

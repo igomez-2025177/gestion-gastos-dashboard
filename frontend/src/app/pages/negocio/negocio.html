@@ -1,0 +1,19 @@
+<div class="negocio-container">
+  <nav class="negocio-subtabs">
+    <button [class.active]="activeSubTab() === 'registro'" (click)="setTab('registro')">Registrar</button>
+    <button [class.active]="activeSubTab() === 'historial'" (click)="setTab('historial')">Historial</button>
+    @if (isOwner()) {
+      <button [class.active]="activeSubTab() === 'equipo'" (click)="setTab('equipo')">Equipo</button>
+    }
+  </nav>
+
+  @if (activeSubTab() === 'registro') {
+    <app-negocio-form (saved)="onMovementSaved()"></app-negocio-form>
+  }
+  @if (activeSubTab() === 'historial') {
+    <app-negocio-historial></app-negocio-historial>
+  }
+  @if (activeSubTab() === 'equipo' && isOwner()) {
+    <app-invitar-miembro></app-invitar-miembro>
+  }
+</div>
