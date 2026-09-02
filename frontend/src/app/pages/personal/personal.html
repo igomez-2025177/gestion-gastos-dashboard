@@ -1,6 +1,6 @@
 <div class="personal">
   <section class="form-panel">
-    <h2>Registrar movimiento</h2>
+    <h2>{{ editingId ? 'Editar movimiento' : 'Registrar movimiento' }}</h2>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="type-toggle">
@@ -62,9 +62,14 @@
         <div class="form-error">{{ errorMessage }}</div>
       }
 
-      <button type="submit" class="submit-btn" [disabled]="isSubmitting">
-        {{ isSubmitting ? 'Guardando...' : 'Registrar' }}
-      </button>
+      <div class="form-actions">
+        <button type="submit" class="submit-btn" [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Guardando...' : (editingId ? 'Actualizar' : 'Registrar') }}
+        </button>
+        @if (editingId) {
+          <button type="button" class="cancel-btn" (click)="cancelEdit()">Cancelar</button>
+        }
+      </div>
     </form>
   </section>
 
@@ -105,6 +110,11 @@
                 }
               </div>
             }
+
+            <div class="history-actions">
+              <button type="button" class="action-btn edit" (click)="startEdit(mov)">Editar</button>
+              <button type="button" class="action-btn delete" (click)="confirmDelete(mov)">Eliminar</button>
+            </div>
           </div>
         }
       </div>

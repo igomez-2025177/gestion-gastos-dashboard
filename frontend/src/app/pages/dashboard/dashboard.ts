@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { MovementService } from '../../services/movement.service';
 import { Personal } from '../personal/personal';
 
 interface AccountTab {
@@ -17,6 +18,10 @@ interface AccountTab {
   styleUrl: './dashboard.css',
 })
 export class Dashboard implements OnInit {
+  public authService = inject(AuthService);
+  public movementService = inject(MovementService);
+  private router = inject(Router);
+
   accountTabs: AccountTab[] = [
     { id: 'menu', label: 'Menú', disabled: false },
     { id: 'personal', label: 'Personal', disabled: false },
@@ -29,17 +34,48 @@ export class Dashboard implements OnInit {
   balance: number | null = null;
   ingresosMes: number | null = null;
   gastosMes: number | null = null;
+
+  // estos todavía no tienen modulo propio, se quedan en No disponible
   impuestos: number | null = null;
   fondoInversion: number | null = null;
   negocio: number | null = null;
 
-  constructor(
-    public authService: AuthService,
-    private router: Router
-  ) {}
-
   ngOnInit(): void {
     this.authService.getMe().subscribe();
+
+    this.movementService.getAll().subscribe(() => {
+      this.calcularTotales();
+    });
+  }
+
+  private calcularTotales(): void {
+    const movements = this.movementService.movements();
+
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+
+    let balanceTotal = 0;
+    let ingresosDelMes = 0;
+    let gastosDelMes = 0;
+
+    for (const mov of movements) {
+      const monto = this.movementService.effectiveAmount(mov);
+      const fecha = new Date(mov.date);
+      const esDelMesActual = fecha.getMonth() === currentMonth && fecha.getFullYear() === currentYear;
+
+      if (mov.type === 'INGRESO') {
+        balanceTotal += monto;
+        if (esDelMesActual) ingresosDelMes += monto;
+      } else {
+        balanceTotal -= monto;
+        if (esDelMesActual) gastosDelMes += monto;
+      }
+    }
+
+    this.balance = balanceTotal;
+    this.ingresosMes = ingresosDelMes;
+    this.gastosMes = gastosDelMes;
   }
 
   setActiveTab(tab: AccountTab): void {

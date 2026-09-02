@@ -93,8 +93,13 @@
   margin-bottom: 1rem;
 }
 
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
 .submit-btn {
-  width: 100%;
+  flex: 1;
   padding: 0.75rem;
   border: none;
   border-radius: 8px;
@@ -109,6 +114,22 @@
 .submit-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.cancel-btn {
+  padding: 0.75rem 1.25rem;
+  border: 1px solid var(--ink-line);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.cancel-btn:hover {
+  border-color: var(--voltum-red);
+  color: var(--voltum-red);
 }
 
 /* Vista previa de descuento automatico (sueldo/bono) */
@@ -157,22 +178,6 @@
 
 .deduction-row.net span:last-child {
   color: var(--income);
-}
-
-/* Nota de compra grande (carro/casa) */
-.big-purchase-note {
-  background: var(--ink-800);
-  border: 1px dashed var(--voltum-blue);
-  border-radius: 10px;
-  padding: 0.875rem 1rem;
-  margin-bottom: 1rem;
-}
-
-.big-purchase-note p:last-child {
-  font-size: 0.8125rem;
-  color: var(--text-muted);
-  margin: 0;
-  line-height: 1.5;
 }
 
 .empty-state {
@@ -250,6 +255,41 @@
   font-family: var(--font-mono);
   font-size: 0.6875rem;
   color: var(--text-faint);
+}
+
+.history-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.625rem;
+  padding-top: 0.625rem;
+  border-top: 1px solid var(--ink-line);
+}
+
+.action-btn {
+  background: transparent;
+  border: none;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  transition: background 0.15s ease;
+}
+
+.action-btn.edit {
+  color: var(--voltum-blue);
+}
+
+.action-btn.edit:hover {
+  background: rgba(61, 111, 242, 0.12);
+}
+
+.action-btn.delete {
+  color: var(--voltum-red);
+}
+
+.action-btn.delete:hover {
+  background: var(--expense-dim);
 }
 
 @media (max-width: 720px) {
