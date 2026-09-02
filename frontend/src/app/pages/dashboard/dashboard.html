@@ -31,35 +31,27 @@
       <div class="summary-grid">
         <div class="summary-card">
           <span class="summary-label">Balance general</span>
-          <span class="summary-value" [class.na]="balance === null">{{ formatMoney(balance) }}</span>
+          <span class="summary-value">{{ formatMoney(balance()) }}</span>
         </div>
         <div class="summary-card">
           <span class="summary-label">Ingresos del mes</span>
-          <span class="summary-value" [class.income]="ingresosMes !== null" [class.na]="ingresosMes === null">
-            {{ formatMoney(ingresosMes) }}
-          </span>
+          <span class="summary-value income">{{ formatMoney(ingresosMes()) }}</span>
         </div>
         <div class="summary-card">
           <span class="summary-label">Gastos del mes</span>
-          <span class="summary-value" [class.expense]="gastosMes !== null" [class.na]="gastosMes === null">
-            {{ formatMoney(gastosMes) }}
-          </span>
+          <span class="summary-value expense">{{ formatMoney(gastosMes()) }}</span>
         </div>
         <div class="summary-card">
-          <span class="summary-label">Impuestos</span>
-          <span class="summary-value" [class.na]="impuestos === null">{{ formatMoney(impuestos) }}</span>
+          <span class="summary-label">IVA pagado este mes</span>
+          <span class="summary-value">{{ formatMoney(impuestos()) }}</span>
         </div>
         <div class="summary-card">
           <span class="summary-label">Fondo de inversión</span>
-          <span class="summary-value" [class.fund]="fondoInversion !== null" [class.na]="fondoInversion === null">
-            {{ formatMoney(fondoInversion) }}
-          </span>
+          <span class="summary-value" [class.na]="fondoInversion === null">{{ formatMoney(fondoInversion) }}</span>
         </div>
         <div class="summary-card">
           <span class="summary-label">Negocio</span>
-          <span class="summary-value" [class.income]="negocio !== null" [class.na]="negocio === null">
-            {{ formatMoney(negocio) }}
-          </span>
+          <span class="summary-value" [class.na]="negocio === null">{{ formatMoney(negocio) }}</span>
         </div>
       </div>
     } @else if (activeTab === 'personal') {

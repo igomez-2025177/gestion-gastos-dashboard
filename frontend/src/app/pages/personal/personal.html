@@ -1,3 +1,20 @@
+<div class="personal-summary">
+  <div class="summary-item">
+    <span class="summary-label">Total ingresos</span>
+    <span class="summary-value income">{{ formatQ(totalIngresos()) }}</span>
+  </div>
+  <div class="summary-item">
+    <span class="summary-label">Total gastos</span>
+    <span class="summary-value expense">{{ formatQ(totalGastos()) }}</span>
+  </div>
+  <div class="summary-item">
+    <span class="summary-label">Balance</span>
+    <span class="summary-value" [class.income]="balancePersonal() >= 0" [class.expense]="balancePersonal() < 0">
+      {{ formatQ(balancePersonal()) }}
+    </span>
+  </div>
+</div>
+
 <div class="personal">
   <section class="form-panel">
     <h2>{{ editingId ? 'Editar movimiento' : 'Registrar movimiento' }}</h2>
@@ -31,28 +48,6 @@
         }
       </div>
 
-      @if (isSalaryCategorySelected()) {
-        <div class="deduction-preview">
-          <p class="deduction-title">Este ingreso lleva descuento de ley</p>
-          @if (previewDeduction(); as preview) {
-            <div class="deduction-row">
-              <span>IGSS (4.83%)</span>
-              <span>- {{ formatQ(preview.igss) }}</span>
-            </div>
-            <div class="deduction-row">
-              <span>ISR estimado</span>
-              <span>- {{ formatQ(preview.isr) }}</span>
-            </div>
-            <div class="deduction-row net">
-              <span>Recibirás</span>
-              <span>{{ formatQ(preview.neto) }}</span>
-            </div>
-          } @else {
-            <p class="deduction-hint">Escribe el monto para ver el descuento estimado</p>
-          }
-        </div>
-      }
-
       <div class="field">
         <label for="description">Descripción (opcional)</label>
         <input id="description" type="text" formControlName="description" placeholder="ej. sueldo del mes" />
@@ -74,13 +69,56 @@
   </section>
 
   <section class="history-panel">
-    <h2>Historial</h2>
+    <div class="history-header">
+      <h2>Historial</h2>
 
-    @if (movementService.movements().length === 0) {
-      <p class="empty-state">Todavía no hay movimientos registrados.</p>
+      <div class="history-filters">
+        <select class="filter-select" [(ngModel)]="filterMonth" [ngModelOptions]="{ standalone: true }">
+          <option value="TODOS">Todos los periodos</option>
+          @for (mes of availableMonths(); track mes.value) {
+            <option [value]="mes.value">{{ mes.label }}</option>
+          }
+        </select>
+
+        <select
+          class="filter-select"
+          [value]="filterType"
+          (change)="onFilterTypeChange($any($event.target).value)"
+        >
+          <option value="TODOS">Todos</option>
+          <option value="INGRESO">Ingresos</option>
+          <option value="GASTO">Gastos</option>
+        </select>
+
+        <select class="filter-select" [(ngModel)]="filterCategory" [ngModelOptions]="{ standalone: true }">
+          <option value="TODAS">Todas las categorías</option>
+          @for (cat of categoriesForFilter(); track cat.value) {
+            <option [value]="cat.value">{{ cat.label }}</option>
+          }
+        </select>
+
+        <button
+          type="button"
+          class="pdf-btn"
+          (click)="exportarPDF()"
+          [disabled]="filteredMovements().length === 0"
+        >
+          Descargar PDF
+        </button>
+      </div>
+    </div>
+
+    @if (filteredMovements().length === 0) {
+      <p class="empty-state">
+        @if (movementService.movements().length === 0) {
+          Todavía no hay movimientos registrados.
+        } @else {
+          No hay movimientos que coincidan con este filtro.
+        }
+      </p>
     } @else {
       <div class="history-list">
-        @for (mov of movementService.movements(); track mov.id) {
+        @for (mov of filteredMovements(); track mov.id) {
           <div class="history-item">
             <div class="history-main">
               <div class="history-info">
@@ -95,21 +133,9 @@
                 [class.income]="mov.type === 'INGRESO'"
                 [class.expense]="mov.type === 'GASTO'"
               >
-                {{ mov.type === 'INGRESO' ? '+' : '-' }}{{ formatQ(hasDeductions(mov) ? netAmount(mov) : mov.amount) }}
+                {{ mov.type === 'INGRESO' ? '+' : '-' }}{{ formatQ(mov.amount) }}
               </span>
             </div>
-
-            @if (hasDeductions(mov)) {
-              <div class="history-deductions">
-                <span>Bruto {{ formatQ(mov.amount) }}</span>
-                @if (mov.igssAmount) {
-                  <span>· IGSS -{{ formatQ(mov.igssAmount) }}</span>
-                }
-                @if (mov.isrAmount) {
-                  <span>· ISR -{{ formatQ(mov.isrAmount) }}</span>
-                }
-              </div>
-            }
 
             <div class="history-actions">
               <button type="button" class="action-btn edit" (click)="startEdit(mov)">Editar</button>

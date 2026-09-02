@@ -42,20 +42,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--voltum-yellow), var(--voltum-orange), var(--voltum-red));
-  color: var(--voltum-black);
-  font-family: var(--font-display);
-  font-weight: 600;
+  background: var(--voltum-orange);
+  color: white;
+  font-family: var(--font-body);
+  font-weight: 700;
   font-size: 1.125rem;
-  border-radius: 9px;
-  box-shadow: 0 6px 18px rgba(242, 130, 61, 0.3);
+  border-radius: 8px;
 }
 
 .brand-name {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 1.25rem;
-  font-weight: 500;
-  letter-spacing: 0.01em;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   color: var(--text-primary);
 }
 
@@ -78,11 +77,12 @@
   color: var(--text-primary);
 }
 
+/* USER en gris, ya no en naranja */
 .user-role {
   font-family: var(--font-mono);
   font-size: 0.6875rem;
   letter-spacing: 0.08em;
-  color: var(--voltum-orange);
+  color: var(--text-muted);
 }
 
 .logout-btn {
@@ -118,7 +118,8 @@
   padding: 0.9rem 0.1rem;
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--text-faint);
+  /* tabs inactivos mas claros/visibles */
+  color: var(--text-muted);
   border-bottom: 2px solid transparent;
   cursor: pointer;
   transition: color 0.15s ease, border-color 0.15s ease;
@@ -140,7 +141,7 @@
 }
 
 .tab-disabled:hover {
-  color: var(--text-faint);
+  color: var(--text-muted);
 }
 
 /* Content */
@@ -193,6 +194,7 @@
   color: var(--text-muted);
 }
 
+/* valores de dinero de vuelta a mono, como marca el sistema VOLTUM */
 .summary-value {
   font-family: var(--font-mono);
   font-size: 1.875rem;
@@ -213,7 +215,6 @@
   color: var(--voltum-blue);
 }
 
-/* Valor cuando no hay data real todavía */
 .summary-value.na {
   font-family: var(--font-body);
   font-size: 1.0625rem;
@@ -222,7 +223,6 @@
   font-style: italic;
 }
 
-/* Pill de estado de impuestos */
 .tax-status-pill {
   align-self: flex-start;
   font-family: var(--font-mono);
@@ -244,7 +244,6 @@
   color: var(--voltum-black);
 }
 
-/* Placeholder de pestañas pendientes */
 .tab-empty {
   padding: 3rem 0;
   text-align: center;
@@ -252,7 +251,6 @@
   font-size: 0.9375rem;
 }
 
-/* Responsive */
 @media (max-width: 720px) {
   .summary-grid {
     grid-template-columns: 1fr;
