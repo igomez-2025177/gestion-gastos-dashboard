@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -31,53 +31,49 @@ export class Dashboard implements OnInit {
 
   activeTab = 'menu';
 
-  balance: number | null = null;
-  ingresosMes: number | null = null;
-  gastosMes: number | null = null;
-  impuestos: number | null = null;
+  balance = computed(() => {
+    let total = 0;
+    for (const mov of this.movementService.movements()) {
+      total += mov.type === 'INGRESO' ? mov.amount : -mov.amount;
+    }
+    return total;
+  });
+
+  ingresosMes = computed(() => this.sumarDelMes('INGRESO'));
+  gastosMes = computed(() => this.sumarDelMes('GASTO'));
+
+  impuestos = computed(() => {
+    const now = new Date();
+    let iva = 0;
+    for (const mov of this.movementService.movements()) {
+      const fecha = new Date(mov.date);
+      const esDelMesActual = fecha.getMonth() === now.getMonth() && fecha.getFullYear() === now.getFullYear();
+      if (mov.type === 'GASTO' && esDelMesActual) {
+        iva += this.movementService.ivaIncluido(mov);
+      }
+    }
+    return iva;
+  });
 
   fondoInversion: number | null = null;
   negocio: number | null = null;
 
   ngOnInit(): void {
     this.authService.getMe().subscribe();
-
-    this.movementService.getAll().subscribe(() => {
-      this.calcularTotales();
-    });
+    this.movementService.getAll().subscribe();
   }
 
-  private calcularTotales(): void {
-    const movements = this.movementService.movements();
-
+  private sumarDelMes(type: 'INGRESO' | 'GASTO'): number {
     const now = new Date();
-    const currentMonth = now.getMonth();
-    const currentYear = now.getFullYear();
-
-    let balanceTotal = 0;
-    let ingresosDelMes = 0;
-    let gastosDelMes = 0;
-    let ivaDelMes = 0;
-
-    for (const mov of movements) {
-      const monto = mov.amount;
+    let total = 0;
+    for (const mov of this.movementService.movements()) {
       const fecha = new Date(mov.date);
-      const esDelMesActual = fecha.getMonth() === currentMonth && fecha.getFullYear() === currentYear;
-
-      if (mov.type === 'INGRESO') {
-        balanceTotal += monto;
-        if (esDelMesActual) ingresosDelMes += monto;
-      } else {
-        balanceTotal -= monto;
-        if (esDelMesActual) gastosDelMes += monto;
-        if (esDelMesActual) ivaDelMes += this.movementService.ivaIncluido(mov);
+      const esDelMesActual = fecha.getMonth() === now.getMonth() && fecha.getFullYear() === now.getFullYear();
+      if (mov.type === type && esDelMesActual) {
+        total += mov.amount;
       }
     }
-
-    this.balance = balanceTotal;
-    this.ingresosMes = ingresosDelMes;
-    this.gastosMes = gastosDelMes;
-    this.impuestos = ivaDelMes;
+    return total;
   }
 
   setActiveTab(tab: AccountTab): void {

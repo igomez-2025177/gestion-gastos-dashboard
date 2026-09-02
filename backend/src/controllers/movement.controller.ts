@@ -5,7 +5,7 @@ import { MovementType, MovementCategory } from "../generated/prisma/client";
 
 const VALID_TYPES = Object.values(MovementType);
 
-const INCOME_CATEGORIES: MovementCategory[] = ["SUELDO", "BONO", "BONO14", "VENTA", "INVERSION", "OTROS"];
+const INCOME_CATEGORIES: MovementCategory[] = ["SUELDO", "BONO", "VENTA", "INVERSION", "OTROS"];
 const EXPENSE_CATEGORIES: MovementCategory[] = ["ALIMENTACION", "TRANSPORTE", "SERVICIOS", "SALUD", "OTROS"];
 
 function isCategoryValidForType(type: MovementType, category: MovementCategory): boolean {
@@ -41,8 +41,6 @@ export async function createMovement(req: AuthRequest, res: Response) {
       return res.status(400).json({ error: "El monto debe ser un número mayor a 0" });
     }
 
-    // ya no se calcula IGSS/ISR: el profesor indico que no aplica para este proyecto.
-    // el monto se guarda tal cual, sin ningun descuento
     const movement = await prisma.movement.create({
       data: {
         type,

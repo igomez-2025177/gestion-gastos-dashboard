@@ -30,7 +30,6 @@ export class Personal implements OnInit {
   incomeCategories: CategoryOption[] = [
     { value: 'SUELDO', label: 'Sueldo' },
     { value: 'BONO', label: 'Bono' },
-    { value: 'BONO14', label: 'Bono 14' },
     { value: 'VENTA', label: 'Venta' },
     { value: 'INVERSION', label: 'Inversión' },
     { value: 'OTROS', label: 'Otros' },

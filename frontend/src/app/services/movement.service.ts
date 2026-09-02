@@ -11,7 +11,6 @@ export type MovementCategory =
   | 'SALUD'
   | 'SUELDO'
   | 'BONO'
-  | 'BONO14'
   | 'VENTA'
   | 'INVERSION'
   | 'OTROS';
@@ -36,8 +35,6 @@ export interface CreateMovementPayload {
   description?: string;
 }
 
-// el IVA en Guatemala es 12% y ya viene incluido en el precio.
-// esta formula "extrae" cuanto de ese monto ya era IVA, no lo suma aparte
 const IVA_RATE = 0.12;
 
 @Injectable({
@@ -86,12 +83,10 @@ export class MovementService {
     );
   }
 
-  // ya no hay descuentos, el monto efectivo es siempre el monto tal cual
   effectiveAmount(mov: Movement): number {
     return mov.amount;
   }
 
-  // calcula cuanto de un gasto ya era IVA (informativo, no se resta de nada)
   ivaIncluido(mov: Movement): number {
     if (mov.type !== 'GASTO') return 0;
     return mov.amount * (IVA_RATE / (1 + IVA_RATE));
