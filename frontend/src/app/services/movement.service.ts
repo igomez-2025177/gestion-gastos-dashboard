@@ -11,7 +11,6 @@ export type MovementCategory =
   | 'SALUD'
   | 'SUELDO'
   | 'BONO'
-  | 'BONO14'
   | 'VENTA'
   | 'INVERSION'
   | 'OTROS';
@@ -35,6 +34,8 @@ export interface CreateMovementPayload {
   amount: number;
   description?: string;
 }
+
+const IVA_RATE = 0.12;
 
 @Injectable({
   providedIn: 'root',
@@ -82,12 +83,12 @@ export class MovementService {
     );
   }
 
-  // el monto real que cuenta para tus totales: si el movimiento tiene
-  // descuentos de ley (sueldo/bono), se usa el neto, si no, el monto tal cual
   effectiveAmount(mov: Movement): number {
-    if (mov.igssAmount || mov.isrAmount) {
-      return mov.amount - (mov.igssAmount ?? 0) - (mov.isrAmount ?? 0);
-    }
     return mov.amount;
+  }
+
+  ivaIncluido(mov: Movement): number {
+    if (mov.type !== 'GASTO') return 0;
+    return mov.amount * (IVA_RATE / (1 + IVA_RATE));
   }
 }

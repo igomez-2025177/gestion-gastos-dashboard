@@ -26,7 +26,6 @@ enum MovementCategory {
   // categorías de ingreso
   SUELDO
   BONO
-  BONO14
   VENTA
   INVERSION
   // categoría comodín, sirve para cualquiera de los dos tipos
