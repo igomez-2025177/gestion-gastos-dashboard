@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { MovementService, MovementType, MovementCategory } from '../../services/movement.service';
@@ -15,6 +15,9 @@ interface CategoryOption {
   styleUrl: './personal.css',
 })
 export class Personal implements OnInit {
+  private fb = inject(FormBuilder);
+  public movementService = inject(MovementService);
+
   categories: CategoryOption[] = [
     { value: 'ALIMENTACION', label: 'Alimentación' },
     { value: 'TRANSPORTE', label: 'Transporte' },
@@ -33,11 +36,6 @@ export class Personal implements OnInit {
     amount: this.fb.control<number | null>(null, [Validators.required, Validators.min(1)]),
     description: this.fb.control(''),
   });
-
-  constructor(
-    private fb: FormBuilder,
-    public movementService: MovementService
-  ) {}
 
   ngOnInit(): void {
     this.movementService.getAll().subscribe();

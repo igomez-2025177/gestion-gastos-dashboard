@@ -1,44 +1,73 @@
-<main class="content">
-  @if (activeTab === 'menu') {
-    <div class="summary-grid">
-      <div class="summary-card">
-        <span class="summary-label">Balance general</span>
-        <span class="summary-value" [class.na]="balance === null">{{ formatMoney(balance) }}</span>
-      </div>
-      <div class="summary-card">
-        <span class="summary-label">Ingresos del mes</span>
-        <span class="summary-value" [class.income]="ingresosMes !== null" [class.na]="ingresosMes === null">
-          {{ formatMoney(ingresosMes) }}
-        </span>
-      </div>
-      <div class="summary-card">
-        <span class="summary-label">Gastos del mes</span>
-        <span class="summary-value" [class.expense]="gastosMes !== null" [class.na]="gastosMes === null">
-          {{ formatMoney(gastosMes) }}
-        </span>
-      </div>
-      <div class="summary-card">
-        <span class="summary-label">Impuestos</span>
-        <span class="summary-value" [class.na]="impuestos === null">{{ formatMoney(impuestos) }}</span>
-      </div>
-      <div class="summary-card">
-        <span class="summary-label">Fondo de inversión</span>
-        <span class="summary-value" [class.fund]="fondoInversion !== null" [class.na]="fondoInversion === null">
-          {{ formatMoney(fondoInversion) }}
-        </span>
-      </div>
-      <div class="summary-card">
-        <span class="summary-label">Negocio</span>
-        <span class="summary-value" [class.income]="negocio !== null" [class.na]="negocio === null">
-          {{ formatMoney(negocio) }}
-        </span>
-      </div>
+<div class="dashboard">
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">G</span>
+      <span class="brand-name">Gestión</span>
     </div>
-  } @else if (activeTab === 'personal') {
-    <app-personal></app-personal>
-  } @else {
-    <div class="tab-empty">
-      <p>No disponible</p>
+    <div class="user-chip">
+      <div class="user-info">
+        <span class="user-name">{{ authService.currentUser()?.name }}</span>
+        <span class="user-role">{{ authService.currentUser()?.role }}</span>
+      </div>
+      <button class="logout-btn" (click)="onLogout()">Cerrar sesión</button>
     </div>
-  }
-</main>
+  </header>
+
+  <nav class="account-tabs">
+    @for (tab of accountTabs; track tab.id) {
+      <div
+        class="tab"
+        [class.tab-active]="activeTab === tab.id"
+        [class.tab-disabled]="tab.disabled"
+        (click)="setActiveTab(tab)"
+      >
+        {{ tab.label }}
+      </div>
+    }
+  </nav>
+
+  <main class="content">
+    @if (activeTab === 'menu') {
+      <div class="summary-grid">
+        <div class="summary-card">
+          <span class="summary-label">Balance general</span>
+          <span class="summary-value" [class.na]="balance === null">{{ formatMoney(balance) }}</span>
+        </div>
+        <div class="summary-card">
+          <span class="summary-label">Ingresos del mes</span>
+          <span class="summary-value" [class.income]="ingresosMes !== null" [class.na]="ingresosMes === null">
+            {{ formatMoney(ingresosMes) }}
+          </span>
+        </div>
+        <div class="summary-card">
+          <span class="summary-label">Gastos del mes</span>
+          <span class="summary-value" [class.expense]="gastosMes !== null" [class.na]="gastosMes === null">
+            {{ formatMoney(gastosMes) }}
+          </span>
+        </div>
+        <div class="summary-card">
+          <span class="summary-label">Impuestos</span>
+          <span class="summary-value" [class.na]="impuestos === null">{{ formatMoney(impuestos) }}</span>
+        </div>
+        <div class="summary-card">
+          <span class="summary-label">Fondo de inversión</span>
+          <span class="summary-value" [class.fund]="fondoInversion !== null" [class.na]="fondoInversion === null">
+            {{ formatMoney(fondoInversion) }}
+          </span>
+        </div>
+        <div class="summary-card">
+          <span class="summary-label">Negocio</span>
+          <span class="summary-value" [class.income]="negocio !== null" [class.na]="negocio === null">
+            {{ formatMoney(negocio) }}
+          </span>
+        </div>
+      </div>
+    } @else if (activeTab === 'personal') {
+      <app-personal></app-personal>
+    } @else {
+      <div class="tab-empty">
+        <p>No disponible</p>
+      </div>
+    }
+  </main>
+</div>
