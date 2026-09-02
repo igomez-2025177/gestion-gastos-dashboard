@@ -12,6 +12,11 @@ enum Role {
   USER
 }
 
+enum MovementType {
+  INGRESO
+  GASTO
+}
+
 enum MovementCategory {
   // categorías de gasto
   ALIMENTACION
